@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: zkmpc-api
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/zkmpc?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+
+    username: root
+    password: ${DB_PASSWORD}
+
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
