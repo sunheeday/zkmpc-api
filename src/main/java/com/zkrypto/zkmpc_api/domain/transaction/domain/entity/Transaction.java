@@ -1,6 +1,7 @@
 package com.zkrypto.zkmpc_api.domain.transaction.domain.entity;
 
 
+import com.zkrypto.zkmpc_api.domain.group.domain.entity.Group;
 import com.zkrypto.zkmpc_api.domain.transaction.domain.constant.TransactionStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -40,16 +41,21 @@ public class Transaction {
     @Column(name = "createdAt", nullable = false)
     private LocalDateTime createdAt;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "group_id", nullable = false)
+    private Group group;
+
     protected Transaction() {}
 
     // 생성자 (거래 요청 시 사용)
-    public Transaction(String transactionId, String from, String to, Double value) {
+    public Transaction(String transactionId, String from, String to, Double value, Group group) {
         this.transactionId = transactionId;
         this.sender = from;
         this.receiver = to;
         this.value = value;
         this.status = TransactionStatus.PENDING;
         this.createdAt = LocalDateTime.now();
+        this.group = group;
     }
 
     // 도메인 비즈니스 로직: 거래 상태 변경 (PATCH /v1/transaction)
