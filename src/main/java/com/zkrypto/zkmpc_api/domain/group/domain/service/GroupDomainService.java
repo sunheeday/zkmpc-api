@@ -8,8 +8,6 @@ import java.util.List;
 @Service
 public class GroupDomainService {
     private final ZkMpcClient zkMpcClient;
-    // 필요한 경우 GroupRepository, EnterpriseRepository 등 주입
-
     public GroupDomainService(ZkMpcClient zkMpcClient) {
         this.zkMpcClient = zkMpcClient;
     }
