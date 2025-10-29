@@ -16,16 +16,12 @@ public class ZkMpcClient {
     @Value("${zkmpc.core-server-ip}")
     private String coreServerIp;
 
-    private final RestTemplate restTemplate;
-
-    public ZkMpcClient(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
-    }
-
     /**
      * 외부 zkMPC 서버에 프로토콜 시작 요청을 보냅니다.
      */
     public void requestStart(String process, String sid, List<String> memberIds, Integer threshold, byte[] messageBytes) {
+
+        RestTemplate restTemplate = new RestTemplate();
 
         String url = coreServerIp + START_PROTOCOL_URI;
 
@@ -38,11 +34,9 @@ public class ZkMpcClient {
         );
 
         try {
-            // POST 요청 실행. 응답은 200 OK Body: { "message": "Success", "data": null }
             restTemplate.postForEntity(url, requestBody, Object.class);
             System.out.println(">>> [zkMPC INFRA] " + process + " 프로토콜 시작 요청 성공: " + url);
         } catch (Exception e) {
-            // 통신 실패나 4xx/5xx 응답 시 예외 처리
             throw new RuntimeException(process + " 프로토콜 시작에 실패했습니다. URI: " + url, e);
         }
     }
