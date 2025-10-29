@@ -48,7 +48,7 @@ public class Transaction {
         this.sender = from;
         this.receiver = to;
         this.value = value;
-        this.status = TransactionStatus.PENDING
+        this.status = TransactionStatus.PENDING;
         this.createdAt = LocalDateTime.now();
     }
 
