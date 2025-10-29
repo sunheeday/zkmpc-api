@@ -37,7 +37,6 @@ public class GroupService {
     public void registerGroup(GroupRegisterRequest request) {
         String newGroupId = "G-" + UUID.randomUUID().toString();
 
-        // DTO에서 memberId를 추출하여 그룹 초기 멤버로 사용
         List<String> initialMemberIds = List.of(request.getMemberId());
 
         Set<Enterprise> enterprises = request.getEnterprises().stream()
@@ -90,7 +89,6 @@ public class GroupService {
                     null
             );
         } catch (Exception e) {
-            // 프로토콜 시작 실패 시, 그룹 등록 롤백을 위해 RuntimeException을 던짐
             throw new RuntimeException("KEY_GENERATION 프로토콜 시작 실패. 그룹 등록 취소됨.", e);
         }
     }
@@ -98,7 +96,6 @@ public class GroupService {
     // 2. zkMPC 프로토콜 시작 유스케이스 (POST /v1/tss/start)
     @Transactional
     public void startZkMpcProtocol(String process, String sid, List<String> memberIds, Integer threshold, byte[] messageBytes) {
-        // Domain Service에 핵심 로직 위임
         groupDomainService.startProtocol(process, sid, memberIds, threshold, messageBytes);
     }
 }
