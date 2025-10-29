@@ -10,6 +10,7 @@ import com.zkrypto.zkmpc_api.domain.group.domain.service.GroupDomainService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -37,7 +38,8 @@ public class GroupService {
     public void registerGroup(GroupRegisterRequest request) {
         String newGroupId = "G-" + UUID.randomUUID().toString();
 
-        List<String> initialMemberIds = List.of(request.getMemberId());
+        String initialMemberId = request.getMemberId();
+
 
         Set<Enterprise> enterprises = request.getEnterprises().stream()
                 .map(enterpriseId -> enterpriseRepository.findByEnterpriseId(enterpriseId)
@@ -48,13 +50,14 @@ public class GroupService {
             throw new IllegalArgumentException("그룹 등록을 위해서는 최소 2개 이상의 유효한 엔터프라이즈 ID가 필요합니다.");
         }
 
-        Set<String> enterpriseIds = enterprises.stream()
+        List<String> memberIds = enterprises.stream()
                 .map(Enterprise::getEnterpriseId)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toCollection(ArrayList::new));
+        memberIds.add(0, initialMemberId);
 
         //여기 그 고정된 threshold 값 계산하는 거 - ..!!
         // 1. 총 참가자 수 계산 (현재 멤버 1명 + 엔터프라이즈 N개)
-        int totalParticipants = initialMemberIds.size() + enterpriseIds.size();
+        int totalParticipants = memberIds.size();
 
         // 2. 요구되는 Threshold 값 계산 (총 참가자 수 - 1)
         int requiredThreshold = totalParticipants - 1;
@@ -71,8 +74,7 @@ public class GroupService {
         // 1.2. 그룹 엔티티 생성 및 저장 (조회된 Enterprise 엔티티 Set을 전달)
         Group group = new Group(
                 newGroupId,
-                initialMemberIds,
-                enterpriseIds,
+                enterprises,
                 request.getThreshold()
         );
         groupRepository.save(group);
@@ -84,7 +86,7 @@ public class GroupService {
             groupDomainService.startProtocol(
                     PROCESS_KEY_GENERATION,
                     newGroupId,
-                    initialMemberIds,
+                    memberIds,
                     request.getThreshold(),
                     null
             );
@@ -98,4 +100,10 @@ public class GroupService {
     public void startZkMpcProtocol(String process, String sid, List<String> memberIds, Integer threshold, byte[] messageBytes) {
         groupDomainService.startProtocol(process, sid, memberIds, threshold, messageBytes);
     }
+
+    public Group getGroupById(String groupId) {
+        return groupRepository.findByGroupId(groupId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 그룹 ID입니다: " + groupId));
+    }
+
 }
