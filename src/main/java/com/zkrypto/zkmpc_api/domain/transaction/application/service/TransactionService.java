@@ -2,6 +2,7 @@ package com.zkrypto.zkmpc_api.domain.transaction.application.service;
 
 
 import com.zkrypto.zkmpc_api.domain.group.application.service.GroupService;
+import com.zkrypto.zkmpc_api.domain.group.domain.entity.Group;
 import com.zkrypto.zkmpc_api.domain.transaction.application.dto.TransactionListResponse;
 import com.zkrypto.zkmpc_api.domain.transaction.application.dto.TransactionRequest;
 import com.zkrypto.zkmpc_api.domain.transaction.application.dto.TransactionResponse;
@@ -29,13 +30,17 @@ public class TransactionService {
     @Transactional
     public TransactionResponse requestTransaction(TransactionRequest request) {
         String newTransactionId = UUID.randomUUID().toString();
+        String groupId = request.getGroupId();
+
+        Group group = groupService.getGroupById(groupId);
 
         // 1.1. 거래 엔티티 생성 및 저장 (PENDING 상태)
         Transaction transaction = new Transaction(
                 newTransactionId,
                 request.getFrom(),
                 request.getTo(),
-                request.getValue()
+                request.getValue(),
+                group
         );
         transactionRepository.save(transaction);
 
@@ -43,12 +48,12 @@ public class TransactionService {
 
         // 1.2. zkMPC SIGNING 프로토콜 시작
         try {
-            groupService.startZkMpcProtocol("SIGNING", "그룹ID", null, 0, messageToSign);
+            groupService.startZkMpcProtocol("SIGNING", groupId, null, 0, messageToSign);
         } catch (Exception e) {
             throw new RuntimeException("SIGNING 프로토콜 시작 실패", e);
         }
 
-        return new TransactionResponse(transaction); // 생성된 엔티티 기반 응답
+        return new TransactionResponse(transaction);
     }
 
     // 2. 거래 상태 변경 (PATCH /v1/transaction)
@@ -68,7 +73,6 @@ public class TransactionService {
         Transaction transaction = transactionRepository.findByTransactionId(transactionId)
                 .orElseThrow(() -> new IllegalArgumentException("거래를 찾을 수 없습니다: " + transactionId));
 
-        // 도메인 엔티티를 응용 프로그램 계층에서 DTO로 변환
         return new TransactionResponse(transaction);
     }
 
