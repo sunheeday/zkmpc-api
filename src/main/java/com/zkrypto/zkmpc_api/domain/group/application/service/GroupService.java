@@ -1,5 +1,6 @@
 package com.zkrypto.zkmpc_api.domain.group.application.service;
 
+import com.zkrypto.zkmpc_api.common.utility.U64IdGenerator;
 import com.zkrypto.zkmpc_api.domain.enterprise.domain.entity.Enterprise;
 import com.zkrypto.zkmpc_api.domain.enterprise.domain.repository.EnterpriseRepository;
 import com.zkrypto.zkmpc_api.domain.group.application.dto.GroupRegisterRequest;
@@ -7,6 +8,7 @@ import com.zkrypto.zkmpc_api.domain.group.domain.entity.Group;
 import com.zkrypto.zkmpc_api.domain.group.domain.repository.GroupRepository;
 import com.zkrypto.zkmpc_api.domain.group.domain.service.GroupDomainService;
 
+import com.zkrypto.zkmpc_api.domain.member.repository.MemberRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -22,21 +24,26 @@ public class GroupService {
     private final GroupRepository groupRepository;
     private final GroupDomainService groupDomainService;
     private final EnterpriseRepository enterpriseRepository;
+    private final MemberRepository memberRepository;
 
     public GroupService(
             GroupRepository groupRepository,
             GroupDomainService groupDomainService,
-            EnterpriseRepository enterpriseRepository
+            EnterpriseRepository enterpriseRepository,
+            MemberRepository memberRepository
     ) {
         this.groupRepository = groupRepository;
         this.groupDomainService = groupDomainService;
         this.enterpriseRepository = enterpriseRepository;
+        this.memberRepository = memberRepository;
     }
 
     // 1. 그룹 등록 (POST /v1/group)
     @Transactional
     public void registerGroup(GroupRegisterRequest request) {
-        String newGroupId = "G-" + UUID.randomUUID().toString();
+
+//        String newGroupId = "G-" + UUID.randomUUID().toString();
+        String newGroupId = U64IdGenerator.generateU64Id();
 
         String initialMemberId = request.getMemberId();
 
@@ -95,15 +102,19 @@ public class GroupService {
         }
     }
 
-    // 2. zkMPC 프로토콜 시작 유스케이스 (POST /v1/tss/start)
-    @Transactional
-    public void startZkMpcProtocol(String process, String sid, List<String> memberIds, Integer threshold, byte[] messageBytes) {
-        groupDomainService.startProtocol(process, sid, memberIds, threshold, messageBytes);
-    }
+//    // 2. zkMPC 프로토콜 시작 유스케이스 (POST /v1/tss/start)
+//    @Transactional
+//    public void startZkMpcProtocol(String process, String sid, List<String> memberIds, Integer threshold, byte[] messageBytes) {
+//        groupDomainService.startProtocol(process, sid, memberIds, threshold, messageBytes);
+//    }
 
     public Group getGroupById(String groupId) {
         return groupRepository.findByGroupId(groupId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 그룹 ID입니다: " + groupId));
     }
+    public String getMemberIdByGroupId(String groupId) {
+        Group group = getGroupById(groupId);
+        return String.valueOf(memberRepository.findByGroup_GroupId(groupId));
 
+    }
 }
