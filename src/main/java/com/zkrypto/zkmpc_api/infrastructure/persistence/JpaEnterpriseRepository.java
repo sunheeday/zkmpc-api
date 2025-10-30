@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface JpaEnterpriseRepository extends JpaRepository<Enterprise, String> { // PK 타입이 String (enterpriseId)
     Optional<Enterprise> findByEnterpriseId(String enterpriseId);
+    boolean existsByEnterpriseId(String enterpriseId);
 }

@@ -29,4 +29,9 @@ public class JpaEnterpriseRepositoryImpl implements EnterpriseRepository {
     public List<Enterprise> findAll() {
         return jpaRepository.findAll();
     }
+
+    @Override
+    public boolean existByEnterpriseId(String enterpriseId) {
+        return jpaRepository.existsByEnterpriseId(enterpriseId);
+    }
 }
