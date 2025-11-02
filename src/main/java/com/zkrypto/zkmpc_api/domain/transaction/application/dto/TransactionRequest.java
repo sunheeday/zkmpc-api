@@ -12,11 +12,6 @@ public class TransactionRequest {
     private String from;
     @NotBlank
     private String to;
-
     @NotNull
     private Double value;
-
-    @NotBlank
-    private String groupId; // 거래에 사용할 MPC 그룹의 ID
-
 }
