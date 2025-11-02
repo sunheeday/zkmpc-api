@@ -29,7 +29,7 @@ public class Group {
     @Column(name = "threshold", nullable = false)
     private Integer threshold; // 출금 승인 최소 인원
 
-    @OneToMany(mappedBy = "group")
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<GroupEnterprise> groupEnterprises = new HashSet<>();
 
     @Column(name = "created_at", nullable = false)
