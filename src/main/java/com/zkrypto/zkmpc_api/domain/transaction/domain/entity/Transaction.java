@@ -10,13 +10,13 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Table(name = "transactions")
+@Table(name = "transactions_data")
 public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "transactionId", unique = true, nullable = false, length = 64)
+    @Column(name = "transaction_id", unique = true, nullable = false, length = 64)
     private String transactionId; // 외부용 거래 요청 ID (VARCHAR(64))
 
     @Column(name = "sender", nullable = false, length = 64)
@@ -25,20 +25,20 @@ public class Transaction {
     @Column(name = "receiver", nullable = false, length = 64)
     private String receiver; // 받는 사람의 지갑 주소
 
-    @Column(name = "value", nullable = false)
+    @Column(name = "txn_value", nullable = false)
     private Double value; // 금액
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
     private TransactionStatus status;
 
-    @Column(name = "txId", length = 64)
+    @Column(name = "tx_id", length = 64)
     private String txId; // 트랜잭션 해시 (서명 완료 후)
 
     @Column(name = "fee")
     private Double fee; // 수수료 (VAT)
 
-    @Column(name = "createdAt", nullable = false)
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
