@@ -93,7 +93,7 @@ public class TransactionService {
 
 
         try {
-            zkMpcClient.requestStart("SIGNING", groupId, memberIds, threshold, encodedTxForSigning);
+            zkMpcClient.requestStartProtocol("SIGNING", groupId, memberIds, threshold, encodedTxForSigning);
         } catch (Exception e) {
             throw new RuntimeException("SIGNING 프로토콜 시작 실패", e);
         }
