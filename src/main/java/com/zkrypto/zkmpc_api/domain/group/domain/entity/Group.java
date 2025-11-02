@@ -16,6 +16,7 @@ package com.zkrypto.zkmpc_api.domain.group.domain.entity;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "group_data")
 public class Group {
 
     @Id
