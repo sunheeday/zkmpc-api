@@ -28,22 +28,4 @@ public class GroupController {
         // API 명세에 따른 성공 응답 (data: null)
         return new ResponseEntity<>(ApiResponse.success(null), HttpStatus.OK);
     }
-
-//    // 2. zkMPC 프로토콜 시작 (POST /api/v1/tss/start)
-//    // 요청: ZkMpcStartRequest (process, sid, memberIds, threshold, messageBytes)
-//    @PostMapping("/tss/start")
-//    public ResponseEntity<ApiResponse<Void>> startProtocol(@Valid @RequestBody ZkMpcStartRequest request) {
-//
-//        // Application Service 호출
-//        groupService.startZkMpcProtocol(
-//                request.getProcess(),
-//                request.getSid(),
-//                request.getMemberIds(),
-//                request.getThreshold(),
-//                request.getMessageBytes()
-//        );
-//
-//        // API 명세에 따른 성공 응답 (data: null)
-//        return new ResponseEntity<>(ApiResponse.success(null), HttpStatus.OK);
-//    }
 }
