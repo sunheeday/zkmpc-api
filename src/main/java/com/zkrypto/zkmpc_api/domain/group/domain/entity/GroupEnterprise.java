@@ -20,7 +20,7 @@ public class GroupEnterprise {
     private Group group;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "enterprise_id", nullable = false, length = 64)
+    @JoinColumn(name = "enterprise_id", nullable = false)
     private Enterprise enterprise;
 
     public GroupEnterprise(Group group, Enterprise enterprise) {
