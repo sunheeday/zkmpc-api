@@ -1,3 +1,4 @@
+/*
 package com.zkrypto.zkmpc_api.infrastructure.persistence;
 
 import com.zkrypto.zkmpc_api.domain.transaction.domain.entity.Transaction;
@@ -30,3 +31,4 @@ public class JpaTransactionRepositoryImpl implements TransactionRepository {
         return jpaRepository.findAll();
     }
 }
+*/
