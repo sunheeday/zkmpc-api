@@ -1,6 +1,7 @@
 package com.zkrypto.zkmpc_api.domain.enterprise.domain.entity;
 
 import com.zkrypto.zkmpc_api.domain.group.domain.entity.Group;
+import com.zkrypto.zkmpc_api.domain.group.domain.entity.GroupEnterprise;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -22,9 +23,11 @@ public class Enterprise {
     @Column(name = "name", unique = true, nullable = false, length = 64)
     private String name;
 
+//    @ManyToMany(mappedBy = "enterprises")
+//    private Set<Group> groups = new HashSet<>();
 
-    @ManyToMany(mappedBy = "enterprises")
-    private Set<Group> groups = new HashSet<>();
+    @OneToMany(mappedBy="enterprise")
+    private Set<GroupEnterprise> groups = new HashSet<>();
 
     public Enterprise(String enterpriseId, String name) {
         // 도메인 규칙 검증
