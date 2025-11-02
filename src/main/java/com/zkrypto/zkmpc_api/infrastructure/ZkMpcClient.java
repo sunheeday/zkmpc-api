@@ -19,7 +19,7 @@ public class ZkMpcClient {
     /**
      * 외부 zkMPC 서버에 프로토콜 시작 요청을 보냅니다.
      */
-    public void requestStart(String process, String sid, List<String> memberIds, Integer threshold, byte[] messageBytes) {
+    public void requestStartProtocol(String process, String sid, List<String> memberIds, Integer threshold, byte[] messageBytes) {
 
         RestTemplate restTemplate = new RestTemplate();
 
