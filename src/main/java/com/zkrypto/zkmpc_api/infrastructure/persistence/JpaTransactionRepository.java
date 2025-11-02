@@ -1,6 +1,7 @@
 package com.zkrypto.zkmpc_api.infrastructure.persistence;
 
 import com.zkrypto.zkmpc_api.domain.transaction.domain.entity.Transaction;
+import com.zkrypto.zkmpc_api.domain.transaction.domain.repository.TransactionRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

@@ -1,6 +1,7 @@
 package com.zkrypto.zkmpc_api.infrastructure.persistence;
 
 import com.zkrypto.zkmpc_api.domain.enterprise.domain.entity.Enterprise;
+import com.zkrypto.zkmpc_api.domain.enterprise.domain.repository.EnterpriseRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
