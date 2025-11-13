@@ -20,7 +20,7 @@ public class GroupDomainService {
             throw new IllegalArgumentException("유효하지 않은 zkMPC 프로세스 타입입니다.");
         }
         try {
-            zkMpcClient.requestStart(process, sid, memberIds, threshold, messageBytes);
+            zkMpcClient.requestStartProtocol(process, sid, memberIds, threshold, messageBytes);
         } catch (Exception e) {
             throw new RuntimeException("zkMPC 서버와 통신 중 오류 발생", e);
         }
