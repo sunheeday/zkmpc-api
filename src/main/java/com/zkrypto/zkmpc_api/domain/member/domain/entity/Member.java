@@ -28,7 +28,7 @@ public class Member {
     private LocalDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "group_id", nullable = false) // member 테이블의 groupid 칼럼을 외래 키로 사용
+    @JoinColumn(name = "group_id") // member 테이블의 groupid 칼럼을 외래 키로 사용
     private Group group; // Group 객체를 참조
 
     public Member(String memberId, String address, String email) {
