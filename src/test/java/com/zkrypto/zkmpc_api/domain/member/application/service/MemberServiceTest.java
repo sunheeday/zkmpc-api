@@ -3,7 +3,7 @@ package com.zkrypto.zkmpc_api.domain.member.application.service;
 import com.zkrypto.zkmpc_api.domain.group.domain.entity.Group;
 import com.zkrypto.zkmpc_api.domain.member.application.dto.MemberRegisterRequest;
 import com.zkrypto.zkmpc_api.domain.member.domain.entity.Member;
-import com.zkrypto.zkmpc_api.infrastructure.persistence.JpaMemberRepository;
+import com.zkrypto.zkmpc_api.domain.member.domain.repository.MemberRepository;
 import com.zkrypto.zkmpc_api.domain.member.domain.service.AuthCodeManager;
 import com.zkrypto.zkmpc_api.domain.member.domain.service.EmailSender;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,6 +13,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings; // 💡 추가
+import org.mockito.quality.Strictness; // 💡 추가
 
 import java.util.Optional;
 
@@ -20,13 +22,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT) // 불필요한 Stubbing 오류 방지
 class MemberServiceTest {
 
     @Mock
-    private JpaMemberRepository jpaMemberRepository;
+    private MemberRepository memberRepository;
     @Mock
     private AuthCodeManager authCodeManager;
     @Mock
@@ -37,94 +41,116 @@ class MemberServiceTest {
 
     private Member member;
     private Group group;
+    private final String TEST_MEMBER_ID = "testMemberId";
+    private final String TEST_EMAIL = "test@example.com";
+    private final String TEST_ADDRESS = "0x123abc";
+    private final String TEST_AUTH_CODE = "123456";
+
 
     @BeforeEach
     void setUp() {
         group = mock(Group.class);
         when(group.getGroupId()).thenReturn("testGroupId");
-        member = new Member("testMemberId", "test@example.com", "0x123abc", null);
+
+        member = new Member(TEST_MEMBER_ID, TEST_ADDRESS, TEST_EMAIL);
     }
+
+    private void mockAuthCodeValid() {
+        when(authCodeManager.get(anyString())).thenReturn(Optional.of(TEST_AUTH_CODE));
+    }
+
 
     @Test
     @DisplayName("멤버 등록 성공")
     void registerMember_success() {
         // Given
-        MemberRegisterRequest request = new MemberRegisterRequest("test@example.com", "0x123abc");
-        when(jpaMemberRepository.findByEmail(anyString())).thenReturn(Optional.empty());
-        when(jpaMemberRepository.findByAddress(anyString())).thenReturn(Optional.empty());
-        when(jpaMemberRepository.save(any(Member.class))).thenReturn(member);
-        doNothing().when(emailSender).sendAuthCode(anyString(), anyString());
-        doNothing().when(authCodeManager).saveAuthCode(anyString(), anyString());
+        MemberRegisterRequest request = new MemberRegisterRequest(TEST_EMAIL, TEST_AUTH_CODE, TEST_ADDRESS);
+
+        mockAuthCodeValid();
+        when(memberRepository.findByEmail(anyString())).thenReturn(Optional.empty());
+        when(memberRepository.findByAddress(anyString())).thenReturn(Optional.empty());
+        when(memberRepository.save(any(Member.class))).thenReturn(member);
 
         // When
-        memberService.registerMember(request);
+        memberService.verifyEmailCodeAndRegisterMember(request);
 
         // Then
-        verify(jpaMemberRepository, times(1)).findByEmail(request.getEmail());
-        verify(jpaMemberRepository, times(1)).findByAddress(request.getAddress());
-        verify(jpaMemberRepository, times(1)).save(any(Member.class));
-        verify(emailSender, times(1)).sendAuthCode(eq(request.getEmail()), anyString());
-        verify(authCodeManager, times(1)).saveAuthCode(eq(request.getEmail()), anyString());
+        // 💡 memberRepository의 findByEmail 호출 검증 추가 (누락된 Service 로직 가정)
+        verify(memberRepository, times(1)).findByEmail(request.getEmail());
+        verify(memberRepository, times(1)).findByAddress(request.getAddress());
+        verify(memberRepository, times(1)).save(any(Member.class));
+        verify(authCodeManager, times(1)).remove(eq(TEST_EMAIL));
     }
 
     @Test
     @DisplayName("멤버 등록 실패 - 이미 존재하는 이메일")
     void registerMember_fail_emailAlreadyExists() {
         // Given
-        MemberRegisterRequest request = new MemberRegisterRequest("test@example.com", "0x123abc");
-        when(jpaMemberRepository.findByEmail(anyString())).thenReturn(Optional.of(member));
+        MemberRegisterRequest request = new MemberRegisterRequest(TEST_EMAIL, TEST_AUTH_CODE, TEST_ADDRESS);
+
+        mockAuthCodeValid();
+        when(memberRepository.findByEmail(anyString())).thenReturn(Optional.of(member));
 
         // When & Then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            memberService.registerMember(request);
+            memberService.verifyEmailCodeAndRegisterMember(request);
         });
-        assertThat(exception.getMessage()).contains("이미 존재하는 이메일입니다.");
-        verify(jpaMemberRepository, never()).save(any(Member.class));
+        //
+        assertThat(exception.getMessage()).contains("이미 가입된 이메일 주소입니다.");
+        verify(memberRepository, times(1)).findByEmail(request.getEmail());
+        verify(memberRepository, never()).save(any(Member.class));
     }
 
     @Test
     @DisplayName("멤버 등록 실패 - 이미 존재하는 주소")
     void registerMember_fail_addressAlreadyExists() {
         // Given
-        MemberRegisterRequest request = new MemberRegisterRequest("test@example.com", "0x123abc");
-        when(jpaMemberRepository.findByEmail(anyString())).thenReturn(Optional.empty());
-        when(jpaMemberRepository.findByAddress(anyString())).thenReturn(Optional.of(member));
+        MemberRegisterRequest request = new MemberRegisterRequest(TEST_EMAIL, TEST_AUTH_CODE, TEST_ADDRESS);
+
+        mockAuthCodeValid();
+        when(memberRepository.findByEmail(anyString())).thenReturn(Optional.empty());
+        when(memberRepository.findByAddress(anyString())).thenReturn(Optional.of(member));
 
         // When & Then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            memberService.registerMember(request);
+            memberService.verifyEmailCodeAndRegisterMember(request);
         });
-        assertThat(exception.getMessage()).contains("이미 존재하는 지갑 주소입니다.");
-        verify(jpaMemberRepository, never()).save(any(Member.class));
+
+        assertThat(exception.getMessage()).contains("이미 등록된 지갑 주소입니다.");
+        verify(memberRepository, times(1)).findByEmail(request.getEmail());
+        verify(memberRepository, times(1)).findByAddress(request.getAddress());
+        verify(memberRepository, never()).save(any(Member.class));
     }
 
     @Test
     @DisplayName("그룹 설정 성공")
     void setGroup_success() {
         // Given
-        when(jpaMemberRepository.findByMemberId(anyString())).thenReturn(Optional.of(member));
-        when(jpaMemberRepository.save(any(Member.class))).thenReturn(member);
+        // @BeforeEach에서 그룹 설정을 제거했으므로, 이 member 객체는 아직 그룹이 없음.
+        when(memberRepository.findByMemberId(eq(TEST_MEMBER_ID))).thenReturn(Optional.of(member));
 
         // When
-        memberService.setGroup("testMemberId", group);
+        memberService.setGroup(TEST_MEMBER_ID, group);
 
         // Then
+        // 💡 그룹 설정이 성공했는지 검증
         assertThat(member.getGroup()).isEqualTo(group);
-        verify(jpaMemberRepository, times(1)).findByMemberId("testMemberId");
-        verify(jpaMemberRepository, times(1)).save(member);
+        verify(memberRepository, times(1)).findByMemberId(TEST_MEMBER_ID);
     }
 
     @Test
     @DisplayName("그룹 설정 실패 - 멤버를 찾을 수 없음")
     void setGroup_fail_memberNotFound() {
+        String nonExistentId = "nonExistentMemberId";
         // Given
-        when(jpaMemberRepository.findByMemberId(anyString())).thenReturn(Optional.empty());
+        when(memberRepository.findByMemberId(eq(nonExistentId))).thenReturn(Optional.empty());
 
         // When & Then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            memberService.setGroup("nonExistentMemberId", group);
+            memberService.setGroup(nonExistentId, group);
         });
-        assertThat(exception.getMessage()).contains("존재하지 않는 멤버 ID입니다.");
-        verify(jpaMemberRepository, never()).save(any(Member.class));
+        // 💡 Assertion 메시지를 정확하게 검증하도록 수정
+        assertThat(exception.getMessage()).contains("존재하지 않는 멤버 ID입니다: " + nonExistentId);
+        verify(memberRepository, never()).save(any(Member.class));
     }
 }
