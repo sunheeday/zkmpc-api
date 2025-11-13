@@ -14,6 +14,8 @@ import com.zkrypto.zkmpc_api.infrastructure.ZkMpcClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -22,6 +24,9 @@ import java.util.List;
 import org.web3j.crypto.RawTransaction;
 import org.web3j.crypto.Sign;
 import org.web3j.crypto.TransactionEncoder;
+import org.web3j.protocol.Web3j;
+import org.web3j.protocol.core.DefaultBlockParameterName;
+import org.web3j.protocol.core.methods.response.EthGetTransactionCount;
 import org.web3j.utils.Convert;
 
 @Service
@@ -30,15 +35,33 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final GroupService groupService;
     private final ZkMpcClient zkMpcClient;
+    private final Web3j web3j;
 
     @Value("${ethereum.chain-id}")
     private Long chainId;
+    private String address;
 
-    public TransactionService(TransactionRepository transactionRepository, GroupService groupService, ZkMpcClient zkMpcClient) {
+    public TransactionService(
+            TransactionRepository transactionRepository,
+            GroupService groupService,
+            ZkMpcClient zkMpcClient,
+            Web3j web3j) {
         this.transactionRepository = transactionRepository;
         this.groupService = groupService;
         this.zkMpcClient = zkMpcClient;
+        this.web3j = web3j;
+    }
 
+    private BigInteger getNonce(String address) {
+        try {
+            EthGetTransactionCount ethGetTransactionCount =
+                    web3j.ethGetTransactionCount(address, DefaultBlockParameterName.LATEST).send();
+
+            return ethGetTransactionCount.getTransactionCount();
+
+        } catch (IOException e) {
+            throw new RuntimeException("논스 값을 가져오는 중 네트워크 오류 발생 (주소: " + address + ")", e);
+        }
     }
 
     // 1. 거래 요청 및 SIGNING 프로토콜 시작 (POST /v1/transaction)
@@ -62,9 +85,11 @@ public class TransactionService {
 //        byte[] messageToSign = newTransactionId.getBytes();
         //TODO 그..from to 값을 이용해서 이더리움 트랜잭션 형태로 만들기 && messageToSign을 유저한테 반환해야함
 
-        String senderAddress = transaction.getSender(); //from
+        String fromAddress = transaction.getSender(); //from
         String toAddress = transaction.getReceiver(); //to
-        BigInteger nonce = BigInteger.ZERO;
+        BigInteger nonce = getNonce(fromAddress);
+
+
         BigInteger gasPrice = BigInteger.valueOf(20_000_000_000L); // 20 Gwei
         BigInteger gasLimit = BigInteger.valueOf(21_000L);
 
