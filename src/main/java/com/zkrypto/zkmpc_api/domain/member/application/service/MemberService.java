@@ -47,8 +47,17 @@ public class MemberService {
     public void verifyEmailCodeAndRegisterMember(MemberRegisterRequest registerRequest) {
 
         // 1. 코드 유효성 검증
+
         if (!validateAuthCode(registerRequest.getEmail(), registerRequest.getAuthCode())) {
             throw new IllegalArgumentException("인증 코드가 일치하지 않거나 만료되었습니다.");
+        }
+
+        if(memberRepository.findByEmail(registerRequest.getEmail()).isPresent()){
+            throw new IllegalArgumentException("이미 가입된 이메일 주소입니다.");
+        }
+
+        if(memberRepository.findByAddress( registerRequest.getAddress()).isPresent()){
+            throw new IllegalArgumentException("이미 등록된 지갑 주소입니다.");
         }
 
         String newMemberId = U64IdGenerator.generateU64Id();
