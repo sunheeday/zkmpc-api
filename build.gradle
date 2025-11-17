@@ -10,7 +10,7 @@ description = 'Demo project for Spring Boot'
 
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
+		languageVersion = JavaLanguageVersion.of(21)
 	}
 }
 
@@ -30,17 +30,27 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.web3j:core:4.10.0'
-
-	
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testImplementation 'com.h2database:h2'
+	// Testcontainers (버전 명시)
+	testImplementation "org.testcontainers:junit-jupiter"
+
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	implementation "org.springframework.boot:spring-boot-starter-reactor-netty"
+	//RabbitMQ에서 브로커 연결 및 통신 설정을 위해 기본으로 사용
+
+	implementation 'org.springframework.boot:spring-boot-starter-amqp'
+	//RabbitMQ를 STOMP 브로커로 사용하기 위해
+	implementation 'org.springframework.amqp:spring-rabbit-stream'
 }
 
 tasks.named('test') {
