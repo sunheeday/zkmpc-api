@@ -3,10 +3,12 @@ package com.zkrypto.zkmpc_api.domain.member.application.service;
 import com.zkrypto.zkmpc_api.common.utility.U64IdGenerator;
 import com.zkrypto.zkmpc_api.domain.group.domain.entity.Group;
 import com.zkrypto.zkmpc_api.domain.member.application.dto.MemberRegisterRequest;
+import com.zkrypto.zkmpc_api.domain.member.application.dto.MemberRegisterResponse;
 import com.zkrypto.zkmpc_api.domain.member.domain.entity.Member;
 import com.zkrypto.zkmpc_api.domain.member.domain.repository.MemberRepository;
 import com.zkrypto.zkmpc_api.domain.member.domain.service.AuthCodeManager;
 import com.zkrypto.zkmpc_api.domain.member.domain.service.EmailSender;
+import com.zkrypto.zkmpc_api.domain.transaction.application.dto.TransactionResponse;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -44,7 +46,7 @@ public class MemberService {
 
     // 2. 이메일 코드 검증 및 멤버 등록 (POST /v1/member)
     @Transactional
-    public void verifyEmailCodeAndRegisterMember(MemberRegisterRequest registerRequest) {
+    public MemberRegisterResponse verifyEmailCodeAndRegisterMember(MemberRegisterRequest registerRequest) {
 
         // 1. 코드 유효성 검증
 
@@ -70,9 +72,10 @@ public class MemberService {
 
         // 2. 최종 멤버 등록 로직 (코드 검증 성공 시)
         memberRepository.save(member);
-
         // 3. 검증 완료 후, Redis 코드 삭제
         authCodeManager.remove(registerRequest.getEmail());
+
+        return new MemberRegisterResponse(newMemberId);
     }
 
     @Transactional
