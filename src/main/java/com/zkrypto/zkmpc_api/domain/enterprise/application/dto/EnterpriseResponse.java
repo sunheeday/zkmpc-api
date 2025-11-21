@@ -1,12 +1,17 @@
 package com.zkrypto.zkmpc_api.domain.enterprise.application.dto;
 
 import com.zkrypto.zkmpc_api.domain.enterprise.domain.entity.Enterprise;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class EnterpriseResponse {
-    private final String enterpriseId;
-    private final String enterpriseName;
+    private String enterpriseId;
+    private String enterpriseName;
 
     public EnterpriseResponse(Enterprise enterprise) {
         this.enterpriseId = enterprise.getEnterpriseId();
