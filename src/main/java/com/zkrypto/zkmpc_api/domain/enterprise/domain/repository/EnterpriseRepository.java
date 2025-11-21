@@ -7,8 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
-public interface EnterpriseRepository{
+public interface EnterpriseRepository {
     Enterprise save(Enterprise enterprise);
     Optional<Enterprise> findByEnterpriseId(String enterpriseId);
     List<Enterprise> findAll();
