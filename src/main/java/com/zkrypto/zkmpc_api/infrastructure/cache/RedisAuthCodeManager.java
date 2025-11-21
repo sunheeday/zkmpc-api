@@ -33,7 +33,7 @@ public class RedisAuthCodeManager implements AuthCodeManager {
     public Optional<String> get(String email) {
         String key = createRedisKey(email);
         String code = redisTemplate.opsForValue().get(key);
-        return Optional.ofNullable(code);
+        return Optional.of(code);
     }
 
     @Override
