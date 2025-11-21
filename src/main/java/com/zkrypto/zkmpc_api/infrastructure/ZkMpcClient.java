@@ -12,8 +12,7 @@ public class ZkMpcClient {
 
     private static final String START_PROTOCOL_URI = "/api/v1/tss/start";
 
-    // application.yml 등에 설정된 core-server-ip 값을 주입받음
-    @Value("${zkmpc.core-server-ip}")
+    @Value("${spring.zkmpc.core-server-ip}")
     private String coreServerIp;
 
     /**
