@@ -1,4 +1,3 @@
-/*
 package com.zkrypto.zkmpc_api.infrastructure.persistence;
 
 import com.zkrypto.zkmpc_api.domain.enterprise.domain.entity.Enterprise;
@@ -12,11 +11,8 @@ import java.util.Optional;
 @Repository
 public class JpaEnterpriseRepositoryImpl implements EnterpriseRepository {
 
-    private final JpaEnterpriseRepository jpaRepository;
-
-    public JpaEnterpriseRepositoryImpl(JpaEnterpriseRepository jpaRepository) {
-        this.jpaRepository = jpaRepository;
-    }
+    @Autowired
+    private JpaEnterpriseRepository jpaRepository;
 
     @Override
     public Enterprise save(Enterprise enterprise) {
@@ -38,4 +34,3 @@ public class JpaEnterpriseRepositoryImpl implements EnterpriseRepository {
         return jpaRepository.existsByEnterpriseId(enterpriseId);
     }
 }
-*/

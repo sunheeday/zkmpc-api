@@ -1,4 +1,3 @@
-/*
 package com.zkrypto.zkmpc_api.infrastructure.persistence;
 
 import com.zkrypto.zkmpc_api.domain.member.domain.entity.Member;
@@ -38,4 +37,3 @@ public class JpaMemberRepositoryImpl implements MemberRepository {
         return jpaRepository.findByGroup_GroupId(groupId);
     }
 }
-*/
