@@ -12,6 +12,7 @@ import com.zkrypto.zkmpc_api.domain.member.application.service.MemberService;
 import com.zkrypto.zkmpc_api.domain.member.domain.entity.Member;
 import com.zkrypto.zkmpc_api.domain.member.domain.repository.MemberRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -22,25 +23,34 @@ import java.util.stream.Collectors;
 @Service
 public class GroupService {
 
-    private final GroupRepository groupRepository;
-    private final GroupDomainService groupDomainService;
-    private final EnterpriseRepository enterpriseRepository;
-    private final MemberRepository memberRepository;
-    private final MemberService memberService;
+    @Autowired
+    private GroupRepository groupRepository;
 
-    public GroupService(
-            GroupRepository groupRepository,
-            GroupDomainService groupDomainService,
-            EnterpriseRepository enterpriseRepository,
-            MemberRepository memberRepository,
-            MemberService memberService
-    ) {
-        this.groupRepository = groupRepository;
-        this.groupDomainService = groupDomainService;
-        this.enterpriseRepository = enterpriseRepository;
-        this.memberRepository = memberRepository;
-        this.memberService = memberService;
-    }
+    @Autowired
+    private GroupDomainService groupDomainService;
+
+    @Autowired
+    private EnterpriseRepository enterpriseRepository;
+
+    @Autowired
+    private MemberRepository memberRepository;
+
+    @Autowired
+    private MemberService memberService;
+
+//    public GroupService(
+//            GroupRepository groupRepository,
+//            GroupDomainService groupDomainService,
+//            EnterpriseRepository enterpriseRepository,
+//            MemberRepository memberRepository,
+//            MemberService memberService
+//    ) {
+//        this.groupRepository = groupRepository;
+//        this.groupDomainService = groupDomainService;
+//        this.enterpriseRepository = enterpriseRepository;
+//        this.memberRepository = memberRepository;
+//        this.memberService = memberService;
+//    }
 
     private Set<Enterprise> findAndValidateEnterprises(List<String> enterpriseIds) {
         Set<Enterprise> enterprises = enterpriseIds.stream()
