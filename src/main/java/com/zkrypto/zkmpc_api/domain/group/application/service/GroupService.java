@@ -51,7 +51,7 @@ public class GroupService {
 
 //        String newGroupId = "G-" + UUID.randomUUID().toString();
         String newGroupId = U64IdGenerator.generateU64Id();
-        String initialMemberId = request.getMemberId(); //멤버아이디
+        String initialMemberId = request.getMemberId();
         Set<Enterprise> enterprises = findAndValidateEnterprises(request.getEnterprises()); //엔터프라이즈
 
 
