@@ -17,7 +17,7 @@ public class MpcMessageController {
     @MessageMapping("/mpc/result")
     public void handleRoundResult(@Payload RoundResult result) {
 
-        // Core 서버의 메시지 수신 큐(예: core.mpc.input.queue)로 라우팅
+        // Core 서버의 메시지 수신 큐
         rabbitTemplate.convertAndSend(
                 "tss.exchange",
                 "mpc.round.input." + result.mpcId(), // 라우팅 키
