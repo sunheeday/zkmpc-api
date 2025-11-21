@@ -32,6 +32,10 @@ dependencies {
 	implementation 'org.web3j:core:4.10.0'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	implementation 'org.eclipse.angus:jakarta.mail'
+	implementation 'jakarta.mail:jakarta.mail-api'
+
+
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok'
@@ -39,8 +43,6 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testImplementation 'com.h2database:h2'
-	// Testcontainers (버전 명시)
-	testImplementation "org.testcontainers:junit-jupiter"
 
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
