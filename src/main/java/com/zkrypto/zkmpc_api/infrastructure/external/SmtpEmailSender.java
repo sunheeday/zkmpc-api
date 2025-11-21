@@ -14,7 +14,7 @@ public class SmtpEmailSender implements EmailSender {
 
     public SmtpEmailSender(JavaMailSender javaMailSender, @Value("${spring.mail.username}") String fromAddress) {
         this.javaMailSender = javaMailSender;
-        this.FROM_ADDRESS = fromAddress;
+        this.FROM_ADDRESS = fromAddress.trim();
     }
 
     @Override

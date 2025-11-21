@@ -1,6 +1,7 @@
 package com.zkrypto.zkmpc_api.domain.member.prensentation;
 
 import com.zkrypto.zkmpc_api.common.response.ApiResponse;
+import com.zkrypto.zkmpc_api.domain.member.application.dto.EmailRequest;
 import com.zkrypto.zkmpc_api.domain.member.application.dto.MemberRegisterRequest;
 import com.zkrypto.zkmpc_api.domain.member.application.dto.MemberRegisterResponse;
 import com.zkrypto.zkmpc_api.domain.member.application.service.MemberService;
@@ -31,8 +32,8 @@ public class MemberController {
     }
 
     @PostMapping("/member/email")
-    public ResponseEntity<ApiResponse<Void>> requestEmail(@Valid @RequestBody String email) {
-        memberService.requestEmailVerificationCode(email);
+    public ResponseEntity<ApiResponse<Void>> requestEmail(@Valid @RequestBody EmailRequest request) {
+        memberService.requestEmailVerificationCode(request.getEmail());
         return new ResponseEntity<>(ApiResponse.success(null), HttpStatus.OK);
     }
 }
