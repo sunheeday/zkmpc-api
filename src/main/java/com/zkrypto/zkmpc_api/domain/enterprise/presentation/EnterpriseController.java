@@ -24,8 +24,6 @@ public class EnterpriseController {
     @PostMapping
     public ResponseEntity<ApiResponse<Void>> registerEnterprise(@Valid @RequestBody EnterpriseRegisterRequest request) {
         enterpriseService.registerEnterprise(request);
-
-        // 성공 응답 명세: 200 OK, data: null
         return new ResponseEntity<>(ApiResponse.success(null), HttpStatus.OK);
     }
 
@@ -33,8 +31,6 @@ public class EnterpriseController {
     @GetMapping
     public ResponseEntity<ApiResponse<List<EnterpriseResponse>>> getEnterprises() {
         List<EnterpriseResponse> response = enterpriseService.getAllEnterprises();
-
-        // 성공 응답 명세: 200 OK, data: List<EnterpriseResponse>
         return new ResponseEntity<>(ApiResponse.success(response), HttpStatus.OK);
     }
 }
