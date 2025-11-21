@@ -12,6 +12,7 @@ import com.zkrypto.zkmpc_api.domain.member.application.service.MemberService;
 import com.zkrypto.zkmpc_api.domain.member.domain.entity.Member;
 import com.zkrypto.zkmpc_api.domain.member.domain.repository.MemberRepository;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,36 +22,16 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class GroupService {
+    private final GroupRepository groupRepository;
+    private final GroupDomainService groupDomainService;
 
-    @Autowired
-    private GroupRepository groupRepository;
+    private final EnterpriseRepository enterpriseRepository;
 
-    @Autowired
-    private GroupDomainService groupDomainService;
+    private final MemberRepository memberRepository;
 
-    @Autowired
-    private EnterpriseRepository enterpriseRepository;
-
-    @Autowired
-    private MemberRepository memberRepository;
-
-    @Autowired
-    private MemberService memberService;
-
-//    public GroupService(
-//            GroupRepository groupRepository,
-//            GroupDomainService groupDomainService,
-//            EnterpriseRepository enterpriseRepository,
-//            MemberRepository memberRepository,
-//            MemberService memberService
-//    ) {
-//        this.groupRepository = groupRepository;
-//        this.groupDomainService = groupDomainService;
-//        this.enterpriseRepository = enterpriseRepository;
-//        this.memberRepository = memberRepository;
-//        this.memberService = memberService;
-//    }
+//    private final MemberService memberService;
 
     private Set<Enterprise> findAndValidateEnterprises(List<String> enterpriseIds) {
         Set<Enterprise> enterprises = enterpriseIds.stream()
@@ -97,7 +78,17 @@ public class GroupService {
                 request.getThreshold()
         );
         groupRepository.save(group);
-        memberService.setGroup(initialMemberId,group);
+
+
+
+//        memberService.setGroup(initialMemberId,group);
+
+        Member member = memberRepository.findByMemberId(initialMemberId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 멤버 ID입니다: " + initialMemberId));
+
+        member.setGroup(group);
+
+
 
         List<String> memberIds = new ArrayList<>(); //총 party+initial memebrId
         memberIds.add(initialMemberId);

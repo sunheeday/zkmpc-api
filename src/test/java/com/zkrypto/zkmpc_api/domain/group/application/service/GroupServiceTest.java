@@ -79,11 +79,11 @@ class GroupServiceTest {
             mockedStatic.when(U64IdGenerator::generateU64Id).thenReturn("newGroupId");
 
             //given
+            when(memberRepository.findByMemberId(groupRegisterRequest.getMemberId())).thenReturn(Optional.of(member));
             when(enterpriseRepository.findByEnterpriseId("enterpriseId1")).thenReturn(Optional.of(enterprise1));
             when(enterpriseRepository.findByEnterpriseId("enterpriseId2")).thenReturn(Optional.of(enterprise2));
             when(groupRepository.save(any(Group.class))).thenReturn(group);
 
-            doNothing().when(memberService).setGroup(anyString(), any(Group.class));
             doNothing().when(groupDomainService).startProtocol(anyString(), anyString(), anyList(), anyInt(), any());
 
             //when
@@ -94,9 +94,6 @@ class GroupServiceTest {
             verify(enterpriseRepository, times(1)).findByEnterpriseId("enterpriseId1");
             verify(enterpriseRepository, times(1)).findByEnterpriseId("enterpriseId2");
             verify(groupRepository, times(1)).save(any(Group.class));
-
-            verify(memberService, times(1)).setGroup(eq(groupRegisterRequest.getMemberId()), any(Group.class));
-
             verify(groupDomainService, times(1)).startProtocol(
                     eq("KEY_GENERATION"),
                     eq("newGroupId"),
@@ -188,12 +185,13 @@ class GroupServiceTest {
         try (MockedStatic<U64IdGenerator> mockedStatic = mockStatic(U64IdGenerator.class)) {
             mockedStatic.when(U64IdGenerator::generateU64Id).thenReturn("newGroupId");
 
+            //given
+            // 💡 수정된 부분: memberRepository Mocking 추가 (이전 실패 원인)
+            when(memberRepository.findByMemberId(groupRegisterRequest.getMemberId())).thenReturn(Optional.of(member));
+
             when(enterpriseRepository.findByEnterpriseId("enterpriseId1")).thenReturn(Optional.of(enterprise1));
             when(enterpriseRepository.findByEnterpriseId("enterpriseId2")).thenReturn(Optional.of(enterprise2));
             when(groupRepository.save(any(Group.class))).thenReturn(group);
-
-            // 💡 doNothing 대신 doThrow 전에 Mocking이 필요합니다.
-            doNothing().when(memberService).setGroup(anyString(), any(Group.class));
 
             doThrow(new RuntimeException("Protocol failed")).when(groupDomainService).startProtocol(anyString(), anyString(), anyList(), anyInt(), any());
 
@@ -203,12 +201,10 @@ class GroupServiceTest {
 
             assertThat(exception.getMessage()).contains("KEY_GENERATION 프로토콜 시작 실패. 그룹 등록 취소됨.");
             mockedStatic.verify(U64IdGenerator::generateU64Id, times(1));
+            verify(memberRepository, times(1)).findByMemberId(groupRegisterRequest.getMemberId()); // 💡 검증 추가
             verify(enterpriseRepository, times(1)).findByEnterpriseId("enterpriseId1");
             verify(enterpriseRepository, times(1)).findByEnterpriseId("enterpriseId2");
             verify(groupRepository, times(1)).save(any(Group.class));
-
-            // 💡 수정된 부분: any(Group.class)를 사용하여 객체 동일성 검증을 완화
-            verify(memberService, times(1)).setGroup(eq(groupRegisterRequest.getMemberId()), any(Group.class));
 
             verify(groupDomainService, times(1)).startProtocol(
                     eq("KEY_GENERATION"),

@@ -3,6 +3,9 @@ package com.zkrypto.zkmpc_api.domain.transaction.application.service;
 
 import com.zkrypto.zkmpc_api.domain.group.application.service.GroupService;
 import com.zkrypto.zkmpc_api.domain.group.domain.entity.Group;
+import com.zkrypto.zkmpc_api.domain.group.domain.repository.GroupRepository;
+import com.zkrypto.zkmpc_api.domain.member.domain.entity.Member;
+import com.zkrypto.zkmpc_api.domain.member.domain.repository.MemberRepository;
 import com.zkrypto.zkmpc_api.domain.transaction.application.dto.TransactionListResponse;
 import com.zkrypto.zkmpc_api.domain.transaction.application.dto.TransactionRequest;
 import com.zkrypto.zkmpc_api.domain.transaction.application.dto.TransactionResponse;
@@ -33,7 +36,8 @@ import org.web3j.utils.Convert;
 public class TransactionService {
 
     private final TransactionRepository transactionRepository;
-    private final GroupService groupService;
+    private final MemberRepository memberRepository;
+
     private final ZkMpcClient zkMpcClient;
     private final Web3j web3j;
 
@@ -43,11 +47,13 @@ public class TransactionService {
 
     public TransactionService(
             TransactionRepository transactionRepository,
-            GroupService groupService,
+//            GroupService groupService,
+            MemberRepository memberRepository,
             ZkMpcClient zkMpcClient,
             Web3j web3j) {
         this.transactionRepository = transactionRepository;
-        this.groupService = groupService;
+//        this.groupService = groupService;
+        this.memberRepository = memberRepository;
         this.zkMpcClient = zkMpcClient;
         this.web3j = web3j;
     }
@@ -69,7 +75,14 @@ public class TransactionService {
     public TransactionResponse requestTransaction(TransactionRequest request) {
         String newTransactionId = UUID.randomUUID().toString();
 
-        Group group = groupService.getGroupByAddress(request.getFrom());
+//        Group group = groupService.getGroupByAddress(request.getFrom());
+
+        Group group = memberRepository.findByAddress(request.getFrom())
+                .orElseThrow(() -> new IllegalArgumentException("해당 지갑 주소의 멤버가 없습니다: " + address))
+                .getGroup();
+
+
+
         String groupId = group.getGroupId();
 
         // 1.1. 거래 엔티티 생성 및 저장 (PENDING 상태)
@@ -107,7 +120,11 @@ public class TransactionService {
                         new byte[]{}, new byte[]{}));
 
         //사용자
-        String memberId = groupService.getMemberIdByGroupId(groupId);
+//        String memberId = groupService.getMemberIdByGroupId(groupId);
+
+        String memberId = memberRepository.findByGroup_GroupId(groupId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 그룹에 존재하는 멤버가 없습니다: " + groupId))
+                .getMemberId();
 
         //파티들 + 사용자
         List<String> memberIds = new ArrayList<>(group.getEnterpriseIds());

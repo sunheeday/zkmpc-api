@@ -4,6 +4,7 @@ import com.zkrypto.zkmpc_api.domain.enterprise.application.dto.EnterpriseRegiste
 import com.zkrypto.zkmpc_api.domain.enterprise.application.dto.EnterpriseResponse;
 import com.zkrypto.zkmpc_api.domain.enterprise.domain.entity.Enterprise;
 import com.zkrypto.zkmpc_api.domain.enterprise.domain.repository.EnterpriseRepository;
+import org.hibernate.validator.internal.util.stereotypes.Lazy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,12 +14,11 @@ import java.util.stream.Collectors;
 @Service
 public class EnterpriseService {
 
-    @Autowired
-    private EnterpriseRepository enterpriseRepository;
-//
-//    public EnterpriseService(EnterpriseRepository enterpriseRepository) {
-//        this.enterpriseRepository = enterpriseRepository;
-//    }
+    private final EnterpriseRepository enterpriseRepository;
+
+    public EnterpriseService( EnterpriseRepository enterpriseRepository) {
+        this.enterpriseRepository = enterpriseRepository;
+    }
 
     // POST /v1/enterprise
     @Transactional
