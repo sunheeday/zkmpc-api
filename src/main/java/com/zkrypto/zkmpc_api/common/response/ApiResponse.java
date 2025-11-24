@@ -1,9 +1,13 @@
 package com.zkrypto.zkmpc_api.common.response;
 
 
+import jnr.ffi.annotations.SaveError;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ApiResponse<T> {
     private final String message;
@@ -20,7 +24,7 @@ public class ApiResponse<T> {
     }
 
     /**
-     * 성공 응답을 생성하는 정적 팩토리 메서드 (데이터 없음, 예: PATCH, POST 등록 성공 시)
+     * 성공 응답을 생성하는 정적 팩토리 메서드
      * 응답 명세: { "message": "Success", "data": null }
      * @return ApiResponse 객체
      */
