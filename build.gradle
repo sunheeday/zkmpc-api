@@ -57,6 +57,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-amqp'
 	//RabbitMQ를 STOMP 브로커로 사용하기 위해
 	implementation 'org.springframework.amqp:spring-rabbit-stream'
+
+	implementation files('libs/common-dto-1.0-SNAPSHOT.jar')
+
 }
 
 tasks.named('test') {
