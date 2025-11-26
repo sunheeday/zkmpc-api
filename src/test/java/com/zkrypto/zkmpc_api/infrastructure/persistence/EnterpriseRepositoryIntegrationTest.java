@@ -11,12 +11,14 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@ActiveProfiles("test")
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class EnterpriseRepositoryIntegrationTest {
@@ -94,8 +96,8 @@ class EnterpriseRepositoryIntegrationTest {
         entityManager.clear();
 
         // When
-        boolean exists = jpaEnterpriseRepository.existsByEnterpriseId("entId1");
-        boolean notExists = jpaEnterpriseRepository.existsByEnterpriseId("nonExistentEntId");
+        boolean exists = jpaEnterpriseRepository.existByEnterpriseId("entId1");
+        boolean notExists = jpaEnterpriseRepository.existByEnterpriseId("nonExistentEntId");
 
         // Then
         assertThat(exists).isTrue();

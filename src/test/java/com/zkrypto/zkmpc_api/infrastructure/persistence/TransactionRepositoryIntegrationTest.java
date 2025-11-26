@@ -12,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -23,6 +24,7 @@ import static com.zkrypto.zkmpc_api.domain.transaction.domain.constant.Transacti
 import static com.zkrypto.zkmpc_api.domain.transaction.domain.constant.TransactionStatus.FAILED;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@ActiveProfiles("test")
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @EnableJpaRepositories(basePackages = "com.zkrypto.zkmpc_api.infrastructure.persistence")

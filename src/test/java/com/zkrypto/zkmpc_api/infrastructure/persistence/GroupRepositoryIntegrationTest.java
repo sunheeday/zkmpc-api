@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@ActiveProfiles("test")
 @DataJpaTest
 @EnableJpaRepositories(basePackages = "com.zkrypto.zkmpc_api.infrastructure.persistence")
 class GroupRepositoryIntegrationTest {

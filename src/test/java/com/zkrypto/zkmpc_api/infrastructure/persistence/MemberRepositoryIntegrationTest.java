@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -20,6 +21,7 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@ActiveProfiles("test")
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @EnableJpaRepositories(basePackages = "com.zkrypto.zkmpc_api.infrastructure.persistence")
@@ -67,7 +69,7 @@ class MemberRepositoryIntegrationTest {
     @DisplayName("멤버 저장 및 ID로 조회 성공")
     void saveAndFindByMemberId_success() {
         // Given
-        Member member = new Member("memberId1", "0x123abc", "test@example.com");
+        Member member = new Member("memberId1", "test@example.com");
         member.setGroup(group);
 
         // When
@@ -82,7 +84,6 @@ class MemberRepositoryIntegrationTest {
         Member foundMember = foundMemberOptional.get();
         assertThat(foundMember.getMemberId()).isEqualTo("memberId1");
         assertThat(foundMember.getEmail()).isEqualTo("test@example.com");
-        assertThat(foundMember.getAddress()).isEqualTo("0x123abc");
         assertThat(foundMember.getGroup().getGroupId()).isEqualTo("groupId1");
     }
 
@@ -100,7 +101,7 @@ class MemberRepositoryIntegrationTest {
     @DisplayName("이메일로 멤버 조회 성공")
     void findByEmail_success() {
         // Given
-        Member member = new Member("memberId2", "0x456def", "email@example.com");
+        Member member = new Member("memberId2", "email@example.com");
         member.setGroup(group);
 
         jpaMemberRepository.save(member);
@@ -116,29 +117,10 @@ class MemberRepositoryIntegrationTest {
     }
 
     @Test
-    @DisplayName("주소로 멤버 조회 성공")
-    void findByAddress_success() {
-        // Given
-        Member member = new Member("memberId3", "0x789ghi", "address@example.com");
-        member.setGroup(group);
-
-        jpaMemberRepository.save(member);
-        entityManager.flush();
-        entityManager.clear();
-
-        // When
-        Optional<Member> foundMemberOptional = jpaMemberRepository.findByAddress("0x789ghi");
-
-        // Then
-        assertThat(foundMemberOptional).isPresent();
-        assertThat(foundMemberOptional.get().getMemberId()).isEqualTo("memberId3");
-    }
-
-    @Test
     @DisplayName("그룹 ID로 멤버 조회 성공")
     void findByGroup_GroupId_success() {
         // Given
-        Member member = new Member("memberId4", "group@example.com", "0xabcjkl");
+        Member member = new Member("memberId4", "group@example.com");
         member.setGroup(group);
 
         jpaMemberRepository.save(member);
