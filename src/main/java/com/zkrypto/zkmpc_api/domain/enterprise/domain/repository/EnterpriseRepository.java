@@ -12,4 +12,5 @@ public interface EnterpriseRepository {
     Optional<Enterprise> findByEnterpriseId(String enterpriseId);
     List<Enterprise> findAll();
     boolean existByEnterpriseId(String enterpriseId);
+    List<String> findAllIds();
 }
