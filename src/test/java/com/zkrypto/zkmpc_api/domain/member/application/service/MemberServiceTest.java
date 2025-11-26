@@ -43,7 +43,6 @@ class MemberServiceTest {
     private Group group;
     private final String TEST_MEMBER_ID = "testMemberId";
     private final String TEST_EMAIL = "test@example.com";
-    private final String TEST_ADDRESS = "0x123abc";
     private final String TEST_AUTH_CODE = "123456";
 
 
@@ -52,7 +51,7 @@ class MemberServiceTest {
         group = mock(Group.class);
         when(group.getGroupId()).thenReturn("testGroupId");
 
-        member = new Member(TEST_MEMBER_ID, TEST_ADDRESS, TEST_EMAIL);
+        member = new Member(TEST_MEMBER_ID, TEST_EMAIL);
     }
 
     private void mockAuthCodeValid() {
@@ -64,11 +63,10 @@ class MemberServiceTest {
     @DisplayName("멤버 등록 성공")
     void registerMember_success() {
         // Given
-        MemberRegisterRequest request = new MemberRegisterRequest(TEST_EMAIL, TEST_AUTH_CODE, TEST_ADDRESS);
+        MemberRegisterRequest request = new MemberRegisterRequest(TEST_EMAIL, TEST_AUTH_CODE);
 
         mockAuthCodeValid();
         when(memberRepository.findByEmail(anyString())).thenReturn(Optional.empty());
-        when(memberRepository.findByAddress(anyString())).thenReturn(Optional.empty());
         when(memberRepository.save(any(Member.class))).thenReturn(member);
 
         // When
@@ -77,7 +75,6 @@ class MemberServiceTest {
         // Then
         // 💡 memberRepository의 findByEmail 호출 검증 추가 (누락된 Service 로직 가정)
         verify(memberRepository, times(1)).findByEmail(request.getEmail());
-        verify(memberRepository, times(1)).findByAddress(request.getAddress());
         verify(memberRepository, times(1)).save(any(Member.class));
         verify(authCodeManager, times(1)).remove(eq(TEST_EMAIL));
     }
@@ -86,7 +83,7 @@ class MemberServiceTest {
     @DisplayName("멤버 등록 실패 - 이미 존재하는 이메일")
     void registerMember_fail_emailAlreadyExists() {
         // Given
-        MemberRegisterRequest request = new MemberRegisterRequest(TEST_EMAIL, TEST_AUTH_CODE, TEST_ADDRESS);
+        MemberRegisterRequest request = new MemberRegisterRequest(TEST_EMAIL, TEST_AUTH_CODE);
 
         mockAuthCodeValid();
         when(memberRepository.findByEmail(anyString())).thenReturn(Optional.of(member));
@@ -101,26 +98,6 @@ class MemberServiceTest {
         verify(memberRepository, never()).save(any(Member.class));
     }
 
-    @Test
-    @DisplayName("멤버 등록 실패 - 이미 존재하는 주소")
-    void registerMember_fail_addressAlreadyExists() {
-        // Given
-        MemberRegisterRequest request = new MemberRegisterRequest(TEST_EMAIL, TEST_AUTH_CODE, TEST_ADDRESS);
-
-        mockAuthCodeValid();
-        when(memberRepository.findByEmail(anyString())).thenReturn(Optional.empty());
-        when(memberRepository.findByAddress(anyString())).thenReturn(Optional.of(member));
-
-        // When & Then
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            memberService.verifyEmailCodeAndRegisterMember(request);
-        });
-
-        assertThat(exception.getMessage()).contains("이미 등록된 지갑 주소입니다.");
-        verify(memberRepository, times(1)).findByEmail(request.getEmail());
-        verify(memberRepository, times(1)).findByAddress(request.getAddress());
-        verify(memberRepository, never()).save(any(Member.class));
-    }
 
     @Test
     @DisplayName("그룹 설정 성공")

@@ -31,24 +31,19 @@ public class MemberService {
 
     // 1. 이메일 코드 요청 (POST /v1/member/email)
     public void requestEmailVerificationCode(String email) {
-        // 1. 유효성 검사: 이미 등록된 이메일인지 확인
         if (memberRepository.findByEmail(email).isPresent()) {
             throw new IllegalArgumentException("이미 가입된 이메일 주소입니다.");
         }
 
-        // 2. 인증 코드 생성 및 저장 (도메인 계약 사용)
         String authCode = authCodeManager.generateCode();
         authCodeManager.save(email, authCode);
 
-        // 3. 이메일 발송 (이메일Sender 구현체가 발송)
         emailSender.sendVerificationCode(email, authCode);
     }
 
     // 2. 이메일 코드 검증 및 멤버 등록 (POST /v1/member)
     @Transactional
     public MemberRegisterResponse verifyEmailCodeAndRegisterMember(MemberRegisterRequest registerRequest) {
-
-        // 1. 코드 유효성 검증
 
         if (!validateAuthCode(registerRequest.getEmail(), registerRequest.getAuthCode())) {
             throw new IllegalArgumentException("인증 코드가 일치하지 않거나 만료되었습니다.");
@@ -58,21 +53,15 @@ public class MemberService {
             throw new IllegalArgumentException("이미 가입된 이메일 주소입니다.");
         }
 
-        if(memberRepository.findByAddress( registerRequest.getAddress()).isPresent()){
-            throw new IllegalArgumentException("이미 등록된 지갑 주소입니다.");
-        }
 
         String newMemberId = U64IdGenerator.generateU64Id();
 
         Member member = new Member(
                 newMemberId,
-                registerRequest.getAddress(),
                 registerRequest.getEmail()
         );
 
-        // 2. 최종 멤버 등록 로직 (코드 검증 성공 시)
         memberRepository.save(member);
-        // 3. 검증 완료 후, Redis 코드 삭제
         authCodeManager.remove(registerRequest.getEmail());
 
         return new MemberRegisterResponse(newMemberId);

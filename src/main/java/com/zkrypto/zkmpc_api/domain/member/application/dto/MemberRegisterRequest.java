@@ -17,7 +17,5 @@ public class MemberRegisterRequest {
     private String email;
     @NotEmpty
     private String authCode;
-    @NotBlank
-    private String address;
 
 }

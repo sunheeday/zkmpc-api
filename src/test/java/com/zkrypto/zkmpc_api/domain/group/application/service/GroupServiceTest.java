@@ -49,7 +49,7 @@ class GroupServiceTest {
     @Mock
     private MemberService memberService;
 
-    @InjectMocks //위에 객체 주입 받은 테스트 대상
+    @InjectMocks
     private GroupService groupService;
 
     private GroupRegisterRequest groupRegisterRequest;
@@ -68,7 +68,7 @@ class GroupServiceTest {
         groupRegisterRequest.setEnterprises(Arrays.asList("enterpriseId1", "enterpriseId2"));
         groupRegisterRequest.setThreshold(2); // 1 member + 2 enterprises = 3 participants, threshold should be 2
 
-        member = new Member("memberId1", "address1", "member@example.com");
+        member = new Member("memberId1", "member@example.com");
         group = new Group("newGroupId", new HashSet<>(Arrays.asList(enterprise1, enterprise2)), 2);
     }
 
@@ -201,7 +201,7 @@ class GroupServiceTest {
 
             assertThat(exception.getMessage()).contains("KEY_GENERATION 프로토콜 시작 실패. 그룹 등록 취소됨.");
             mockedStatic.verify(U64IdGenerator::generateU64Id, times(1));
-            verify(memberRepository, times(1)).findByMemberId(groupRegisterRequest.getMemberId()); // 💡 검증 추가
+            verify(memberRepository, times(1)).findByMemberId(groupRegisterRequest.getMemberId());
             verify(enterpriseRepository, times(1)).findByEnterpriseId("enterpriseId1");
             verify(enterpriseRepository, times(1)).findByEnterpriseId("enterpriseId2");
             verify(groupRepository, times(1)).save(any(Group.class));
@@ -264,28 +264,4 @@ class GroupServiceTest {
         verify(memberRepository, times(1)).findByGroup_GroupId("nonExistentGroupId");
     }
 
-    @Test
-    @DisplayName("지갑 주소로 그룹 조회 성공")
-    void getGroupByAddress_success() {
-        member.setGroup(group); // Associate member with group
-        when(memberRepository.findByAddress("address1")).thenReturn(Optional.of(member));
-
-        Group foundGroup = groupService.getGroupByAddress("address1");
-
-        assertThat(foundGroup).isEqualTo(group);
-        verify(memberRepository, times(1)).findByAddress("address1");
-    }
-
-    @Test
-    @DisplayName("지갑 주소로 그룹 조회 실패 - 멤버 없음")
-    void getGroupByAddress_notFound_throwsException() {
-        when(memberRepository.findByAddress("nonExistentAddress")).thenReturn(Optional.empty());
-
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            groupService.getGroupByAddress("nonExistentAddress");
-        });
-
-        assertThat(exception.getMessage()).contains("해당 지갑 주소의 멤버가 없습니다: nonExistentAddress");
-        verify(memberRepository, times(1)).findByAddress("nonExistentAddress");
-    }
 }

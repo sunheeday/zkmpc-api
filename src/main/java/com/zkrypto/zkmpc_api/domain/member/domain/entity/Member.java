@@ -18,7 +18,7 @@ public class Member {
     @Column(name = "member_id", unique = true, nullable = false)
     private String memberId; // PK
 
-    @Column(name = "address", unique = true, nullable = false, length = 64)
+    @Column(name = "address", unique = true, length = 64)
     private String address; // 지갑 주소
 
     @Column(name = "email", unique = true, nullable = false)
@@ -31,9 +31,9 @@ public class Member {
     @JoinColumn(name = "group_id") // member 테이블의 groupid 칼럼을 외래 키로 사용
     private Group group; // Group 객체를 참조
 
-    public Member(String memberId, String address, String email) {
+    public Member(String memberId, String email) {
         this.memberId = memberId;
-        this.address = address;
+        this.address = null;
         this.email = email;
         this.createdAt = LocalDateTime.now();
         this.group = null;
