@@ -122,7 +122,7 @@ public class GroupService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 그룹 ID입니다: " + groupId));
     }
     public String getMemberIdByGroupId(String groupId) {
-        Member member = memberRepository.findByGroup_GroupId(groupId)
+        Member member = memberRepository.findByGroupGroupId(groupId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 그룹에 존재하는 멤버가 없습니다: " + groupId));
 
         return member.getMemberId();

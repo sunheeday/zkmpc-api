@@ -9,6 +9,6 @@ public interface MemberRepository {
     Optional<Member> findByMemberId(String memberId);
     Optional<Member> findByAddress(String address);
     Optional<Member> findByEmail(String email);
-    Optional<Member> findByGroup_GroupId(String groupId);
+    Optional<Member> findByGroupGroupId(String groupId);
 
 }

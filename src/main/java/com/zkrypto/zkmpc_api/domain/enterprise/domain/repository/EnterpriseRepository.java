@@ -11,6 +11,6 @@ public interface EnterpriseRepository {
     Enterprise save(Enterprise enterprise);
     Optional<Enterprise> findByEnterpriseId(String enterpriseId);
     List<Enterprise> findAll();
-    boolean existByEnterpriseId(String enterpriseId);
+    boolean existsByEnterpriseId(String enterpriseId);
     List<String> findAllIds();
 }

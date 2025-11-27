@@ -10,6 +10,8 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -35,22 +37,12 @@ public class TransactionController {
         );
     }
 
-    // 2. 단일 거래 조회 또는 전체 목록 조회 (GET)
-    // URI: api-server-ip/api/v1/transaction?transactionId={id} (단일)
+    // 2. 전체 목록 조회 (GET)
     // URI: api-server-ip/api/v1/transaction (전체 목록)
     @GetMapping
-    public ResponseEntity<ApiResponse<?>> getTransaction(
-            @RequestParam(value = "transactionId", required = false) String transactionId
-    ) {
-        if (transactionId != null && !transactionId.isEmpty()) {
-            // 단일 거래 조회
-            TransactionResponse response = transactionService.getTransaction(transactionId);
+    public ResponseEntity<ApiResponse<List<TransactionResponse>>> getTransaction() {
+            List<TransactionResponse> response = transactionService.getAllTransactions(); //
             return new ResponseEntity<>(ApiResponse.success(response), HttpStatus.OK);
-        } else {
-            // 전체 거래 목록 조회
-            TransactionListResponse response = transactionService.getAllTransactions();
-            return new ResponseEntity<>(ApiResponse.success(response.getTransactions()), HttpStatus.OK);
-        }
     }
 
     // 3. 거래 상태 변경 (PATCH)

@@ -24,7 +24,7 @@ public class EnterpriseService {
     @Transactional
     public void registerEnterprise(EnterpriseRegisterRequest request) {
 
-        if (enterpriseRepository.existByEnterpriseId(request.getEnterpriseId())) {
+        if (enterpriseRepository.existsByEnterpriseId(request.getEnterpriseId())) {
             throw new IllegalArgumentException("이미 등록된 ID입니다: " + request.getEnterpriseId()); // 409 Conflict
         }
 

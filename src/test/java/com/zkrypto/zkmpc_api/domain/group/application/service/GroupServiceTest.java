@@ -243,25 +243,25 @@ class GroupServiceTest {
     @Test
     @DisplayName("그룹 ID로 멤버 ID 조회 성공")
     void getMemberIdByGroupId_success() {
-        when(memberRepository.findByGroup_GroupId("newGroupId")).thenReturn(Optional.of(member));
+        when(memberRepository.findByGroupGroupId("newGroupId")).thenReturn(Optional.of(member));
 
         String foundMemberId = groupService.getMemberIdByGroupId("newGroupId");
 
         assertThat(foundMemberId).isEqualTo("memberId1");
-        verify(memberRepository, times(1)).findByGroup_GroupId("newGroupId");
+        verify(memberRepository, times(1)).findByGroupGroupId("newGroupId");
     }
 
     @Test
     @DisplayName("그룹 ID로 멤버 ID 조회 실패 - 멤버 없음")
     void getMemberIdByGroupId_notFound_throwsException() {
-        when(memberRepository.findByGroup_GroupId("nonExistentGroupId")).thenReturn(Optional.empty());
+        when(memberRepository.findByGroupGroupId("nonExistentGroupId")).thenReturn(Optional.empty());
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
             groupService.getMemberIdByGroupId("nonExistentGroupId");
         });
 
         assertThat(exception.getMessage()).contains("해당 그룹에 존재하는 멤버가 없습니다: nonExistentGroupId");
-        verify(memberRepository, times(1)).findByGroup_GroupId("nonExistentGroupId");
+        verify(memberRepository, times(1)).findByGroupGroupId("nonExistentGroupId");
     }
 
 }

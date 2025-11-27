@@ -34,8 +34,8 @@ public class JpaEnterpriseRepositoryAdaptor implements EnterpriseRepository {
     }
 
     @Override
-    public boolean existByEnterpriseId(String enterpriseId) {
-        return jpaEnterpriseRepository.existByEnterpriseId(enterpriseId);
+    public boolean existsByEnterpriseId(String enterpriseId) {
+        return jpaEnterpriseRepository.existsByEnterpriseId(enterpriseId);
     }
 
     @Override

@@ -96,8 +96,8 @@ class EnterpriseRepositoryIntegrationTest {
         entityManager.clear();
 
         // When
-        boolean exists = jpaEnterpriseRepository.existByEnterpriseId("entId1");
-        boolean notExists = jpaEnterpriseRepository.existByEnterpriseId("nonExistentEntId");
+        boolean exists = jpaEnterpriseRepository.existsByEnterpriseId("entId1");
+        boolean notExists = jpaEnterpriseRepository.existsByEnterpriseId("nonExistentEntId");
 
         // Then
         assertThat(exists).isTrue();

@@ -122,7 +122,7 @@ public class TransactionService {
         //사용자
 //        String memberId = groupService.getMemberIdByGroupId(groupId);
 
-        String memberId = memberRepository.findByGroup_GroupId(groupId)
+        String memberId = memberRepository.findByGroupGroupId(groupId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 그룹에 존재하는 멤버가 없습니다: " + groupId))
                 .getMemberId();
 
@@ -163,12 +163,9 @@ public class TransactionService {
 
     // 4. 모든 거래 조회 로직 (GET /v1/transaction)
     @Transactional(readOnly = true)
-    public TransactionListResponse getAllTransactions() {
+    public List<TransactionResponse> getAllTransactions() {
         return transactionRepository.findAll().stream()
                 .map(TransactionResponse::new)
-                .collect(Collectors.collectingAndThen(
-                        Collectors.toList(),
-                        TransactionListResponse::new
-                ));
+                .collect(Collectors.toList());
     }
 }

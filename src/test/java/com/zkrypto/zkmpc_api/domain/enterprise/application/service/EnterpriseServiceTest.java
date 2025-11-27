@@ -45,14 +45,14 @@ class EnterpriseServiceTest {
     @DisplayName("새로운 기업을 성공적으로 등록한다")
     void registerEnterprise_success() {
         // Given
-        when(enterpriseRepository.existByEnterpriseId(registerRequest.getEnterpriseId())).thenReturn(false);
+        when(enterpriseRepository.existsByEnterpriseId(registerRequest.getEnterpriseId())).thenReturn(false);
         when(enterpriseRepository.save(any(Enterprise.class))).thenReturn(enterprise);
 
         // When
         enterpriseService.registerEnterprise(registerRequest);
 
         // Then
-        verify(enterpriseRepository, times(1)).existByEnterpriseId(registerRequest.getEnterpriseId());
+        verify(enterpriseRepository, times(1)).existsByEnterpriseId(registerRequest.getEnterpriseId());
         verify(enterpriseRepository, times(1)).save(any(Enterprise.class));
     }
 
@@ -60,7 +60,7 @@ class EnterpriseServiceTest {
     @DisplayName("이미 존재하는 기업 ID로 등록 시 예외를 발생시킨다")
     void registerEnterprise_duplicateId_throwsException() {
         // Given
-        when(enterpriseRepository.existByEnterpriseId(registerRequest.getEnterpriseId())).thenReturn(true);
+        when(enterpriseRepository.existsByEnterpriseId(registerRequest.getEnterpriseId())).thenReturn(true);
 
         // When & Then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -68,7 +68,7 @@ class EnterpriseServiceTest {
         });
 
         assertThat(exception.getMessage()).contains("이미 등록된 ID입니다");
-        verify(enterpriseRepository, times(1)).existByEnterpriseId(registerRequest.getEnterpriseId());
+        verify(enterpriseRepository, times(1)).existsByEnterpriseId(registerRequest.getEnterpriseId());
         verify(enterpriseRepository, never()).save(any(Enterprise.class));
     }
 

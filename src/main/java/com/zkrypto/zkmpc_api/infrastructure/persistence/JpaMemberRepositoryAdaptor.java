@@ -37,7 +37,7 @@ public class JpaMemberRepositoryAdaptor implements MemberRepository {
     }
 
     @Override
-    public Optional<Member> findByGroup_GroupId(String groupId) {
-        return jpaMemberRepository.findByGroup_GroupId(groupId);
+    public Optional<Member> findByGroupGroupId(String groupId) {
+        return jpaMemberRepository.findByGroupGroupId(groupId);
     }
 }

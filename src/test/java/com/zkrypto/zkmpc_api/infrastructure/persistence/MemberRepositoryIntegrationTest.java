@@ -118,7 +118,7 @@ class MemberRepositoryIntegrationTest {
 
     @Test
     @DisplayName("그룹 ID로 멤버 조회 성공")
-    void findByGroup_GroupId_success() {
+    void findByGroupGroupId_success() {
         // Given
         Member member = new Member("memberId4", "group@example.com");
         member.setGroup(group);
@@ -128,7 +128,7 @@ class MemberRepositoryIntegrationTest {
         entityManager.clear();
 
         // When
-        Optional<Member> foundMemberOptional = jpaMemberRepository.findByGroup_GroupId("groupId1");
+        Optional<Member> foundMemberOptional = jpaMemberRepository.findByGroupGroupId("groupId1");
 
         // Then
         assertThat(foundMemberOptional).isPresent();
