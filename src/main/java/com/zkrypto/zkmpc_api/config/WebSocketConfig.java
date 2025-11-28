@@ -5,6 +5,7 @@ import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+import org.springframework.web.socket.config.annotation.WebSocketTransportRegistration;
 
 @Configuration
 @EnableWebSocketMessageBroker
@@ -23,7 +24,13 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // WebSocket 연결 엔드포인트 설정 (클라이언트가 접속할 URL)
-        // CORS 문제 해결을 위해 setAllowedOriginPatterns("*") 사용
         registry.addEndpoint("/ws").setAllowedOriginPatterns("*").withSockJS();
+    }
+
+    @Override
+    public void configureWebSocketTransport(WebSocketTransportRegistration registration) {
+        registration.setMessageSizeLimit(1024 * 1024)
+                .setSendBufferSizeLimit(1024 * 1024)
+                .setSendTimeLimit(20000);
     }
 }
