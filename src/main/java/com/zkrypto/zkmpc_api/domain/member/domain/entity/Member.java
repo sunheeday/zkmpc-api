@@ -16,10 +16,10 @@ public class Member {
 
     @Id
     @Column(name = "member_id", unique = true, nullable = false)
-    private String memberId; // PK
+    private String memberId;
 
-    @Column(name = "address", unique = true, length = 64)
-    private String address; // 지갑 주소
+    @Column(name = "address", length = 64)
+    private String address;
 
     @Column(name = "email", unique = true, nullable = false)
     private String email;
@@ -44,5 +44,12 @@ public class Member {
             throw new IllegalStateException("멤버 [" + this.memberId + "]는 이미 그룹에 속해 있습니다.");
         }
         this.group = group;
+    }
+
+    public void setAddress(String address) {
+        if (this.address != null) {
+            throw new IllegalStateException("멤버는 현재 등록된 지갑 주소가 있습니다. 현 지갑 주소는 [" + this.address + "] 입니다");
+        }
+        this.address = address;
     }
 }

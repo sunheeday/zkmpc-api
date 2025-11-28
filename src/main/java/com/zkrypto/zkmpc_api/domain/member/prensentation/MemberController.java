@@ -1,9 +1,10 @@
 package com.zkrypto.zkmpc_api.domain.member.prensentation;
 
 import com.zkrypto.zkmpc_api.common.response.ApiResponse;
+import com.zkrypto.zkmpc_api.domain.member.application.dto.AddressRegisterRequest;
 import com.zkrypto.zkmpc_api.domain.member.application.dto.EmailRequest;
-import com.zkrypto.zkmpc_api.domain.member.application.dto.MemberRegisterRequest;
 import com.zkrypto.zkmpc_api.domain.member.application.dto.MemberRegisterResponse;
+import com.zkrypto.zkmpc_api.domain.member.application.dto.VerifyEmailCode;
 import com.zkrypto.zkmpc_api.domain.member.application.service.MemberService;
 import com.zkrypto.zkmpc_api.domain.transaction.application.dto.TransactionResponse;
 import jakarta.validation.Valid;
@@ -25,7 +26,7 @@ public class MemberController {
     }
 
     @PostMapping("/member")
-    public ResponseEntity<ApiResponse<MemberRegisterResponse>> registerMember(@Valid @RequestBody MemberRegisterRequest request) {
+    public ResponseEntity<ApiResponse<MemberRegisterResponse>> registerMember(@Valid @RequestBody VerifyEmailCode request) {
         MemberRegisterResponse response = memberService.verifyEmailCodeAndRegisterMember(request);
 
         return new ResponseEntity<>(ApiResponse.success(response), HttpStatus.OK);
@@ -36,4 +37,11 @@ public class MemberController {
         memberService.requestEmailVerificationCode(request.getEmail());
         return new ResponseEntity<>(ApiResponse.success(null), HttpStatus.OK);
     }
+
+    @PostMapping("/member/address")
+    public ResponseEntity<ApiResponse<Void>> registerAddress(@Valid @RequestBody AddressRegisterRequest request) {
+        memberService.registerAddress(request);
+        return new ResponseEntity<>(ApiResponse.success(null), HttpStatus.OK);
+    }
 }
+
