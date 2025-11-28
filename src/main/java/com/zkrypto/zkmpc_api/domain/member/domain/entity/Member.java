@@ -18,7 +18,7 @@ public class Member {
     @Column(name = "member_id", unique = true, nullable = false)
     private String memberId; // PK
 
-    @Column(name = "address", unique = true, length = 64)
+    @Column(name = "address", length = 64)
     private String address; // 지갑 주소
 
     @Column(name = "email", unique = true, nullable = false)

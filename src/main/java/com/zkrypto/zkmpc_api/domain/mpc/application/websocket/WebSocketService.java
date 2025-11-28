@@ -16,7 +16,7 @@ public class WebSocketService {
 
     private final SimpMessagingTemplate messagingTemplate;
 
-    private static final String FIXED_DESTINATION = "/queue/messages";
+    private static final String FIXED_DESTINATION = "/queue/messages/";
 
     /**
      * RabbitMQ로부터 받은 모든 메시지(라운드, 초기화, 시작)를 WebSocket으로 앱 클라이언트에게 전달
@@ -25,9 +25,9 @@ public class WebSocketService {
      */
     public void deliverMessageToApp(String clientId, Object message) {
 
-        final String destination = FIXED_DESTINATION;
+        final String destination = FIXED_DESTINATION + clientId;
         try {
-            messagingTemplate.convertAndSendToUser(clientId, destination, message);
+            messagingTemplate.convertAndSend(destination, message);
 
             log.info("Client {}에게 {} 메시지 성공적으로 전달. Destination: {}",
                     clientId, message.getClass().getSimpleName(), destination);

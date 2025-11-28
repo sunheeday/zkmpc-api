@@ -38,23 +38,23 @@ public class MemberService {
         String authCode = authCodeManager.generateCode();
         authCodeManager.save(email, authCode);
 
-        emailSender.sendVerificationCode(email, authCode);
+//        emailSender.sendVerificationCode(email, authCode);
     }
 
     // 2. 이메일 코드 검증 및 멤버 등록 (POST /v1/member)
     @Transactional
     public MemberRegisterResponse verifyEmailCodeAndRegisterMember(MemberRegisterRequest registerRequest) {
 
-        if (!validateAuthCode(registerRequest.getEmail(), registerRequest.getAuthCode())) {
-            throw new IllegalArgumentException("인증 코드가 일치하지 않거나 만료되었습니다.");
-        }
+//        if (!validateAuthCode(registerRequest.getEmail(), registerRequest.getAuthCode())) {
+//            throw new IllegalArgumentException("인증 코드가 일치하지 않거나 만료되었습니다.");
+//        }
 
         if(memberRepository.findByEmail(registerRequest.getEmail()).isPresent()){
             throw new IllegalArgumentException("이미 가입된 이메일 주소입니다.");
         }
 
 
-        String newMemberId = U64IdGenerator.generateU64Id();
+        String newMemberId = "1";
 
         Member member = new Member(
                 newMemberId,

@@ -3,18 +3,55 @@ spring:
     name: zkmpc-api
 
   datasource:
-    url: jdbc:mysql://localhost:3306/zkmpc?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-
-    username: root
-    password: ${DB_PASSWORD}
-
     driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/zkmpc?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: root
+    password: rootpassword
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
 
     properties:
       hibernate:
         show_sql: true
         format_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+  mail:
+    host: localhost
+    port: 225
+    username: dong
+    password: 123
+    properties:
+      mail:
+        writetimeout: 0
+        smtp:
+          writetimeout: 1
+          timeout: 3
+          connectiontimeout: 10
+          starttls:
+            enable: true
+            required: false
+          auth: 1
+
+  web3j:
+    client-address: http://localhost:8545
+
+  zkmpc:
+    core-server-ip: http://localhost:8083
+
+ethereum:
+  chain-id: 1337
+
+server:
+  tomcat:
+    websocket:
+      text-message-buffer-size: 524288
+      binary-message-buffer-size: 524288

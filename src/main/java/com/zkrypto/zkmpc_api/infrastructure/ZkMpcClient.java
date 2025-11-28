@@ -1,12 +1,14 @@
 package com.zkrypto.zkmpc_api.infrastructure;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate; // 외부 통신을 위해 RestTemplate 사용 가정
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Component
 public class ZkMpcClient {
 
@@ -23,6 +25,10 @@ public class ZkMpcClient {
         RestTemplate restTemplate = new RestTemplate();
 
         String url = coreServerIp + START_PROTOCOL_URI;
+
+        for (String id : memberIds) {
+            log.info("id : " + id);
+        }
 
         Map<String, Object> requestBody = Map.of(
                 "process", process,
