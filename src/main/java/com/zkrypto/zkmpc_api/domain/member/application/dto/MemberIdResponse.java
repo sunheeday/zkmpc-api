@@ -3,9 +3,9 @@ package com.zkrypto.zkmpc_api.domain.member.application.dto;
 import lombok.Getter;
 
 @Getter
-public class MemberRegisterResponse {
+public class MemberIdResponse {
     private final String memberId;
-    public MemberRegisterResponse(String memberId){
+    public MemberIdResponse(String memberId){
         this.memberId = memberId;
     }
 }

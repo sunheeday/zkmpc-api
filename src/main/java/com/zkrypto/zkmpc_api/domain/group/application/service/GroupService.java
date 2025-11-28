@@ -53,14 +53,9 @@ public class GroupService {
         Set<Enterprise> enterprises = findAndValidateEnterprises(request.getEnterprises()); //엔터프라이즈
 
 
-        //여기 그 고정된 threshold 값 계산하는 거 - ..!!
-        // 1. 총 참가자 수 계산 (현재 멤버 1명 + 엔터프라이즈 N개)
+
         int totalParticipants = 1 + enterprises.size();
-
-        // 2. 요구되는 Threshold 값 계산 (총 참가자 수 - 1)
         int requiredThreshold = totalParticipants - 1;
-
-        // 3. 현재 요청된 threshold 값과 비교
         if (!request.getThreshold().equals(requiredThreshold)) {
             throw new IllegalArgumentException(
                     "Threshold (" + request.getThreshold() +
@@ -69,7 +64,6 @@ public class GroupService {
             );
         }
 
-        // 1.2. 그룹 엔티티 생성 및 저장 (조회된 Enterprise 엔티티 Set을 전달)
         Group group = new Group(
                 newGroupId,
                 enterprises,
@@ -78,15 +72,10 @@ public class GroupService {
         groupRepository.save(group);
 
 
-
-//        memberService.setGroup(initialMemberId,group);
-
         Member member = memberRepository.findByMemberId(initialMemberId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 멤버 ID입니다: " + initialMemberId));
 
         member.setGroup(group);
-
-
 
         List<String> memberIds = new ArrayList<>(); //총 party+initial memebrId
         memberIds.add(initialMemberId);

@@ -1,10 +1,7 @@
 package com.zkrypto.zkmpc_api.domain.member.prensentation;
 
 import com.zkrypto.zkmpc_api.common.response.ApiResponse;
-import com.zkrypto.zkmpc_api.domain.member.application.dto.AddressRegisterRequest;
-import com.zkrypto.zkmpc_api.domain.member.application.dto.EmailRequest;
-import com.zkrypto.zkmpc_api.domain.member.application.dto.MemberRegisterResponse;
-import com.zkrypto.zkmpc_api.domain.member.application.dto.VerifyEmailCode;
+import com.zkrypto.zkmpc_api.domain.member.application.dto.*;
 import com.zkrypto.zkmpc_api.domain.member.application.service.MemberService;
 import com.zkrypto.zkmpc_api.domain.transaction.application.dto.TransactionResponse;
 import jakarta.validation.Valid;
@@ -26,8 +23,8 @@ public class MemberController {
     }
 
     @PostMapping("/member")
-    public ResponseEntity<ApiResponse<MemberRegisterResponse>> registerMember(@Valid @RequestBody VerifyEmailCode request) {
-        MemberRegisterResponse response = memberService.verifyEmailCodeAndRegisterMember(request);
+    public ResponseEntity<ApiResponse<MemberIdResponse>> registerMember(@Valid @RequestBody VerifyEmailCode request) {
+        MemberIdResponse response = memberService.verifyEmailCodeAndRegisterMember(request);
 
         return new ResponseEntity<>(ApiResponse.success(response), HttpStatus.OK);
     }
@@ -41,6 +38,19 @@ public class MemberController {
     @PostMapping("/member/address")
     public ResponseEntity<ApiResponse<Void>> registerAddress(@Valid @RequestBody AddressRegisterRequest request) {
         memberService.registerAddress(request);
+        return new ResponseEntity<>(ApiResponse.success(null), HttpStatus.OK);
+    }
+
+
+    @PostMapping("/member/verify")
+    public ResponseEntity<ApiResponse<MemberIdResponse>> verifyMember(@Valid @RequestBody VerifyEmailCode request) {
+        MemberIdResponse response = memberService.verifyMember(request);
+        return new ResponseEntity<>(ApiResponse.success(response), HttpStatus.OK);
+    }
+
+    @PostMapping("/member/recover")
+    public ResponseEntity<ApiResponse<Void>> recoverKey(@Valid @RequestBody KeyRecoverRequest request) {
+        memberService.recoverKey(request);
         return new ResponseEntity<>(ApiResponse.success(null), HttpStatus.OK);
     }
 }
