@@ -1,7 +1,7 @@
 package com.zkrypto.zkmpc_api.domain.member.application.service;
 
 import com.zkrypto.zkmpc_api.domain.group.domain.entity.Group;
-import com.zkrypto.zkmpc_api.domain.member.application.dto.MemberRegisterRequest;
+import com.zkrypto.zkmpc_api.domain.member.application.dto.VerifyEmailCode;
 import com.zkrypto.zkmpc_api.domain.member.domain.entity.Member;
 import com.zkrypto.zkmpc_api.domain.member.domain.repository.MemberRepository;
 import com.zkrypto.zkmpc_api.domain.member.domain.service.AuthCodeManager;
@@ -63,7 +63,7 @@ class MemberServiceTest {
     @DisplayName("멤버 등록 성공")
     void registerMember_success() {
         // Given
-        MemberRegisterRequest request = new MemberRegisterRequest(TEST_EMAIL, TEST_AUTH_CODE);
+        VerifyEmailCode request = new VerifyEmailCode(TEST_EMAIL, TEST_AUTH_CODE);
 
         mockAuthCodeValid();
         when(memberRepository.findByEmail(anyString())).thenReturn(Optional.empty());
@@ -83,7 +83,7 @@ class MemberServiceTest {
     @DisplayName("멤버 등록 실패 - 이미 존재하는 이메일")
     void registerMember_fail_emailAlreadyExists() {
         // Given
-        MemberRegisterRequest request = new MemberRegisterRequest(TEST_EMAIL, TEST_AUTH_CODE);
+        VerifyEmailCode request = new VerifyEmailCode(TEST_EMAIL, TEST_AUTH_CODE);
 
         mockAuthCodeValid();
         when(memberRepository.findByEmail(anyString())).thenReturn(Optional.of(member));
