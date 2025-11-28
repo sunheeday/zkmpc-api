@@ -2,8 +2,9 @@ package com.zkrypto.zkmpc_api.domain.member.application.service;
 
 import com.zkrypto.zkmpc_api.common.utility.U64IdGenerator;
 import com.zkrypto.zkmpc_api.domain.group.domain.entity.Group;
-import com.zkrypto.zkmpc_api.domain.member.application.dto.MemberRegisterRequest;
+import com.zkrypto.zkmpc_api.domain.member.application.dto.AddressRegisterRequest;
 import com.zkrypto.zkmpc_api.domain.member.application.dto.MemberRegisterResponse;
+import com.zkrypto.zkmpc_api.domain.member.application.dto.VerifyEmailCode;
 import com.zkrypto.zkmpc_api.domain.member.domain.entity.Member;
 import com.zkrypto.zkmpc_api.domain.member.domain.repository.MemberRepository;
 import com.zkrypto.zkmpc_api.domain.member.domain.service.AuthCodeManager;
@@ -17,7 +18,7 @@ import java.util.Optional;
 @Service
 public class MemberService {
     private final MemberRepository memberRepository;
-    private final AuthCodeManager authCodeManager; //레디스 구현체
+    private final AuthCodeManager authCodeManager;
     private final EmailSender emailSender;
 
     public MemberService(
@@ -43,7 +44,7 @@ public class MemberService {
 
     // 2. 이메일 코드 검증 및 멤버 등록 (POST /v1/member)
     @Transactional
-    public MemberRegisterResponse verifyEmailCodeAndRegisterMember(MemberRegisterRequest registerRequest) {
+    public MemberRegisterResponse verifyEmailCodeAndRegisterMember(VerifyEmailCode registerRequest) {
 
         if (!validateAuthCode(registerRequest.getEmail(), registerRequest.getAuthCode())) {
             throw new IllegalArgumentException("인증 코드가 일치하지 않거나 만료되었습니다.");
@@ -66,6 +67,49 @@ public class MemberService {
 
         return new MemberRegisterResponse(newMemberId);
     }
+
+    @Transactional
+    public MemberRegisterResponse verifyEmailCode(VerifyEmailCode recoverRequest) {
+
+        if (!validateAuthCode(recoverRequest.getEmail(), recoverRequest.getAuthCode())) {
+            throw new IllegalArgumentException("인증 코드가 일치하지 않거나 만료되었습니다.");
+        }
+
+        if(memberRepository.findByEmail(recoverRequest.getEmail()).isPresent()){
+            throw new IllegalArgumentException("이미 가입된 이메일 주소입니다.");
+        }
+
+
+        String newMemberId = U64IdGenerator.generateU64Id();
+
+        Member member = new Member(
+                newMemberId,
+                recoverRequest.getEmail()
+        );
+
+        memberRepository.save(member);
+        authCodeManager.remove(recoverRequest.getEmail());
+
+        return new MemberRegisterResponse(newMemberId);
+    }
+
+    //3. 주소 등록
+    @Transactional
+    public void registerAddress(AddressRegisterRequest registerRequest){
+        Member member = memberRepository.findByMemberId(registerRequest.getMemberId())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 멤버 ID입니다"));
+
+        member.setAddress(registerRequest.getAddress());
+    }
+
+//    //4.복구
+//    @Transactional
+//    public void recoverKey(KeyRecoverRequest recoverRequest){
+//        Member member = memberRepository.findByMemberId(registerRequest.getMemberId())
+//                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 멤버 ID입니다"));
+//
+//
+//    }
 
     @Transactional
     public void setGroup(String memberId, Group group) {
