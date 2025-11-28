@@ -1,12 +1,16 @@
 package com.zkrypto.zkmpc_api.infrastructure;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate; // 외부 통신을 위해 RestTemplate 사용 가정
+import org.springframework.web.client.RestTemplate;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap; // 🌟 HashMap을 사용하기 위해 import 추가
 
+@Slf4j
 @Component
 public class ZkMpcClient {
 
@@ -24,18 +28,27 @@ public class ZkMpcClient {
 
         String url = coreServerIp + START_PROTOCOL_URI;
 
-        Map<String, Object> requestBody = Map.of(
-                "process", process,
-                "sid", sid,
-                "memberIds", memberIds,
-                "threshold", threshold
-                // SIGNING이 아닐 경우 messageBytes는 null이거나 생략될 수 있음
-        );
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("process", process);
+        requestBody.put("sid", sid);
+        requestBody.put("memberIds", memberIds);
+        requestBody.put("threshold", threshold);
+        requestBody.put("messageBytes", messageBytes);
+
+        log.debug(">>> [zkMPC INFRA] Request URL: {}", url);
+        log.debug(">>> [zkMPC INFRA] Request Body: {}", requestBody);
 
         try {
-            restTemplate.postForEntity(url, requestBody, Object.class);
-            System.out.println(">>> [zkMPC INFRA] " + process + " 프로토콜 시작 요청 성공: " + url);
+            ResponseEntity<Object> responseEntity = restTemplate.postForEntity(url, requestBody, Object.class);
+
+            int statusCode = responseEntity.getStatusCodeValue();
+            Object responseBody = responseEntity.getBody();
+
+            log.info("<<< [zkMPC INFRA] Response Status: {} for {} protocol.", statusCode, process);
+            log.info(">>> [zkMPC INFRA] {} 프로토콜 시작 요청 성공: {}", process, url);
+
         } catch (Exception e) {
+            log.error("⚠️ [zkMPC INFRA] {} 프로토콜 시작에 실패했습니다. URI: {}", process, url, e);
             throw new RuntimeException(process + " 프로토콜 시작에 실패했습니다. URI: " + url, e);
         }
     }
