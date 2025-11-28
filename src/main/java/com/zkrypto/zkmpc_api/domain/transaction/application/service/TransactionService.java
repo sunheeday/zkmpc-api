@@ -47,12 +47,10 @@ public class TransactionService {
 
     public TransactionService(
             TransactionRepository transactionRepository,
-//            GroupService groupService,
             MemberRepository memberRepository,
             ZkMpcClient zkMpcClient,
             Web3j web3j) {
         this.transactionRepository = transactionRepository;
-//        this.groupService = groupService;
         this.memberRepository = memberRepository;
         this.zkMpcClient = zkMpcClient;
         this.web3j = web3j;
@@ -75,15 +73,14 @@ public class TransactionService {
     public TransactionResponse requestTransaction(TransactionRequest request) {
         String newTransactionId = UUID.randomUUID().toString();
 
-//        Group group = groupService.getGroupByAddress(request.getFrom());
-
         Group group = memberRepository.findByAddress(request.getFrom())
                 .orElseThrow(() -> new IllegalArgumentException("해당 지갑 주소의 멤버가 없습니다: " + address))
                 .getGroup();
 
 
-
         String groupId = group.getGroupId();
+        Integer threshold = group.getThreshold();
+
 
         // 1.1. 거래 엔티티 생성 및 저장 (PENDING 상태)
         Transaction transaction = new Transaction(
@@ -120,18 +117,16 @@ public class TransactionService {
                         new byte[]{}, new byte[]{}));
 
         //사용자
-//        String memberId = groupService.getMemberIdByGroupId(groupId);
-
         String memberId = memberRepository.findByGroupGroupId(groupId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 그룹에 존재하는 멤버가 없습니다: " + groupId))
                 .getMemberId();
 
         //파티들 + 사용자
-        List<String> memberIds = new ArrayList<>(group.getEnterpriseIds());
+        List<String> enterpriseIds = new ArrayList<>(group.getEnterpriseIds());
+        int limit = Math.min(enterpriseIds.size(), threshold-1);
+
+        List<String> memberIds = new ArrayList<>(enterpriseIds.subList(0, limit));
         memberIds.add(memberId);
-
-        Integer threshold = group.getThreshold();
-
 
 
         try {
