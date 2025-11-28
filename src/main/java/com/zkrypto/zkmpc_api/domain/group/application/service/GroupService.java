@@ -31,8 +31,6 @@ public class GroupService {
 
     private final MemberRepository memberRepository;
 
-//    private final MemberService memberService;
-
     private Set<Enterprise> findAndValidateEnterprises(List<String> enterpriseIds) {
         Set<Enterprise> enterprises = enterpriseIds.stream()
                 .map(id -> enterpriseRepository.findByEnterpriseId(id)
