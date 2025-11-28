@@ -11,7 +11,7 @@ import lombok.Getter;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MemberRegisterRequest {
+public class VerifyEmailCode {
 
     @NotBlank
     private String email;
