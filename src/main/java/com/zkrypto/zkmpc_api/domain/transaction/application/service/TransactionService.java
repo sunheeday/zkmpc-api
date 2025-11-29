@@ -91,26 +91,26 @@ public class TransactionService {
 //        byte[] messageToSign = newTransactionId.getBytes();
         //TODO 그..from to 값을 이용해서 이더리움 트랜잭션 형태로 만들기 && messageToSign을 유저한테 반환해야함
 
-//        String fromAddress = request.getFrom(); //from
-//        String toAddress = request.getTo(); //to
-//        BigInteger nonce = getNonce(fromAddress);
-//
-//
-//        BigInteger gasPrice = BigInteger.valueOf(20_000_000_000L); // 20 Gwei
-//        BigInteger gasLimit = BigInteger.valueOf(21_000L);
-//
-//        BigInteger valueInWei = Convert.toWei(
-//                String.valueOf(request.getValue()),
-//                Convert.Unit.ETHER
-//        ).toBigInteger();
-//
-//        RawTransaction rawTransaction = RawTransaction
-//                .createTransaction(nonce, gasPrice, gasLimit, toAddress, valueInWei, "0x");
+        String fromAddress = request.getFrom(); //from
+        String toAddress = request.getTo(); //to
+        BigInteger nonce = getNonce(fromAddress);
 
-//        byte[] encodedTxForSigning = TransactionEncoder.encode(
-//                rawTransaction,
-//                new Sign.SignatureData(BigInteger.valueOf(this.chainId).toByteArray(),
-//                        new byte[]{}, new byte[]{}));
+
+        BigInteger gasPrice = BigInteger.valueOf(20_000_000_000L); // 20 Gwei
+        BigInteger gasLimit = BigInteger.valueOf(21_000L);
+
+        BigInteger valueInWei = Convert.toWei(
+                String.valueOf(request.getValue()),
+                Convert.Unit.ETHER
+        ).toBigInteger();
+
+        RawTransaction rawTransaction = RawTransaction
+                .createTransaction(nonce, gasPrice, gasLimit, toAddress, valueInWei, "");
+
+        byte[] encodedTxForSigning = TransactionEncoder.encode(
+                rawTransaction,
+                new Sign.SignatureData(BigInteger.valueOf(this.chainId).toByteArray(),
+                        new byte[]{}, new byte[]{}));
 
         //사용자
 //        String memberId = groupService.getMemberIdByGroupId(groupId);
@@ -129,7 +129,7 @@ public class TransactionService {
 
 
         try {
-            zkMpcClient.requestStartProtocol("SIGNING", "1", memberIds, 2,  request.getTx().getBytes(StandardCharsets.UTF_8));
+            zkMpcClient.requestStartProtocol("SIGNING", "1", memberIds, 2,  request.getTx());
         } catch (Exception e) {
             throw new RuntimeException("SIGNING 프로토콜 시작 실패", e);
         }

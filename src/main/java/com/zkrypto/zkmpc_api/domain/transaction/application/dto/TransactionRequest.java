@@ -19,5 +19,5 @@ public class TransactionRequest {
     @NotNull
     private Double value;
     @NotNull
-    private String tx;
+    private byte[] tx;
 }
