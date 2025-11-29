@@ -105,7 +105,7 @@ public class GroupService {
                     newGroupId,
                     memberIds,
                     request.getThreshold(),
-                    null
+                    new byte[]{}
             );
         } catch (Exception e) {
             throw new RuntimeException("KEY_GENERATION 프로토콜 시작 실패. 그룹 등록 취소됨.", e);

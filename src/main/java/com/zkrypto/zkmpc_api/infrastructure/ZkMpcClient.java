@@ -27,15 +27,21 @@ public class ZkMpcClient {
         String url = coreServerIp + START_PROTOCOL_URI;
 
         for (String id : memberIds) {
-            log.info("id : " + id);
+            log.info("member id : " + id);
         }
+
+        log.info("process : {}", process);
+        log.info("sid : {}", sid);
+        log.info("memberIds : {}", memberIds);
+        log.info("threshold : {}", threshold);
+        log.info("messageBytes : {}", messageBytes);
 
         Map<String, Object> requestBody = Map.of(
                 "process", process,
                 "sid", sid,
                 "memberIds", memberIds,
-                "threshold", threshold
-                // SIGNING이 아닐 경우 messageBytes는 null이거나 생략될 수 있음
+                "threshold", threshold,
+                "messageBytes", messageBytes
         );
 
         try {

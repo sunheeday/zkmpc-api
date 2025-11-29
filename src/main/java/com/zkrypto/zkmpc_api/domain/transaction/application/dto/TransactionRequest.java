@@ -18,4 +18,6 @@ public class TransactionRequest {
     private String to;
     @NotNull
     private Double value;
+    @NotNull
+    private String tx;
 }

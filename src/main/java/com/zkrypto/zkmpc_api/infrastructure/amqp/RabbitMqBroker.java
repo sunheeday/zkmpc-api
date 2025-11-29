@@ -38,7 +38,7 @@ public class RabbitMqBroker implements MessageBroker {
     @Override
     public void publish(ProtocolCompleteEvent event) {
         //topic.complete
-        String routingKey = RabbitMqConfig.TSS_PROTOCOL_COMPLETE_KEY_PREFIX+ "." + event.memberId(); //topic.complete
+        String routingKey = RabbitMqConfig.TSS_PROTOCOL_COMPLETE_KEY_PREFIX; //topic.complete
         ProtocolCompleteMessage message = MessageMapper.from(event);
         rabbitTemplate.convertAndSend(RabbitMqConfig.TSS_EXCHANGE, routingKey, message);
     }

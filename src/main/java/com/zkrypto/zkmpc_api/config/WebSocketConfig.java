@@ -18,7 +18,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         // 클라이언트에게 메시지를 푸시할 때 사용할 Prefix (Destination) 설정
         // /topic, /queue 접두사가 붙은 메시지는 브로커가 처리
         config.enableSimpleBroker("/topic", "/queue");
-
         // 애플리케이션에서 처리할 메시지의 Prefix (클라이언트가 서버로 보낼 때 사용)
         config.setApplicationDestinationPrefixes("/app");
     }
@@ -27,7 +26,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void configureWebSocketTransport(WebSocketTransportRegistration registration) {
         registration.setMessageSizeLimit(512 * 1024); // 512KB (메시지 전체 크기 제한)
         registration.setSendBufferSizeLimit(1024 * 1024); // 1MB (버퍼 사이즈 제한)
-        registration.setSendTimeLimit(40 * 1000); // 40초 (전송 시간 제한)
+        registration.setSendTimeLimit(80 * 1000); // 80초 (전송 시간 제한)
     }
 
     @Bean
@@ -36,7 +35,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
         container.setMaxTextMessageBufferSize(512 * 1024);
         container.setMaxBinaryMessageBufferSize(512 * 1024);
-        container.setMaxSessionIdleTimeout(20 * 1000L);
+        container.setMaxSessionIdleTimeout(1800000L);
 
         return container;
     }

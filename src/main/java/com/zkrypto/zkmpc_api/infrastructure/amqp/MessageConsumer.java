@@ -8,6 +8,7 @@ import com.zkrypto.zkmpc_api.common.annotation.ManualAck;
 import com.zkrypto.zkmpc_api.config.RabbitMqConfig;
 import com.zkrypto.zkmpc_api.domain.enterprise.domain.repository.EnterpriseRepository;
 import com.zkrypto.zkmpc_api.domain.mpc.application.websocket.WebSocketService;
+import com.zkrypto.zkmpc_api.domain.transaction.application.service.TransactionService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +28,7 @@ public class MessageConsumer {
 
     private final WebSocketService webSocketService;
     private final EnterpriseRepository enterpriseRepository;
+    private final TransactionService transactionService;
     private List<String> excludedIdsList;
 
     @PostConstruct
@@ -61,7 +63,6 @@ public class MessageConsumer {
 
         }
     }
-
 
     // --- 1. 라운드 메시지 처리 리스너 ---
     @RabbitListener(bindings = @QueueBinding(
@@ -111,5 +112,15 @@ public class MessageConsumer {
     ) throws IOException {
         log.info("initTssProtocol ReceivedRoutingKey:{}",receivedRoutingKey);
         handleMessageDelivery(message, receivedRoutingKey);
+    }
+
+    // --- 3. 서명 처리 ---
+    @RabbitListener(bindings = @QueueBinding(
+            value = @Queue(value = "tss.sign.all", durable = "true", exclusive = "false", autoDelete = "false"),
+            exchange = @Exchange(value = RabbitMqConfig.TSS_EXCHANGE, type = ExchangeTypes.TOPIC),
+            key = RabbitMqConfig.TSS_SIGN_KEY_PREFIX
+    ))
+    public void sign(String message) throws IOException {
+        transactionService.sign(message);
     }
 }

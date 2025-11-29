@@ -42,7 +42,7 @@ spring:
           auth: 1
 
   web3j:
-    client-address: http://localhost:8545
+    client-address: http://61.74.32.229:8545
 
   zkmpc:
     core-server-ip: http://localhost:8083

@@ -32,7 +32,7 @@ public class TransactionController {
 
         // API 명세의 응답 형식에 맞춤
         return new ResponseEntity<>(
-                ApiResponse.success(Map.of("transactionId", response.getTransactionId())),
+                ApiResponse.success(Map.of("transactionId", "1")),
                 HttpStatus.OK
         );
     }
